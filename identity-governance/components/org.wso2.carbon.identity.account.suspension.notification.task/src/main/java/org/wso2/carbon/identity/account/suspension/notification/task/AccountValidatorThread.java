@@ -243,6 +243,8 @@ public class AccountValidatorThread implements Runnable {
                     Map<String, String> updatedClaims = new HashMap<>();
                     updatedClaims.put(NotificationConstants.ACCOUNT_SUSPENDED_CLAIM, Boolean.TRUE.toString());
                     updatedClaims.put(NotificationConstants.FAILED_LOGIN_ATTEMPTS, "0");
+                    log.info("+++AccountValidatorThread account suspended for user: " + IdentityUtil.addDomainToName(receiver.getUsername(),
+                            receiver.getUserStoreDomain()) + "@" + tenantDomain);
                     try {
                         userStoreManager.setUserClaimValues(IdentityUtil.addDomainToName(receiver.getUsername(),
                                 receiver.getUserStoreDomain()), updatedClaims, UserCoreConstants.DEFAULT_PROFILE);

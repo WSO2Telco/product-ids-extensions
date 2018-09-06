@@ -55,7 +55,7 @@ public class NotificationReceiversRetrievalManager {
                 long lookupMin;
                 try {
                     lookupMin = getCurrentExecutionTime(NotificationTaskDataHolder.getInstance().
-                            getNotificationTriggerTime()).getTimeInMillis() - TimeUnit.DAYS.toMillis(delay+1);
+                            getNotificationTriggerTime()).getTimeInMillis() - TimeUnit.DAYS.toMillis(delay+2);
                 } catch (ParseException e) {
                     throw new AccountSuspensionNotificationException("Error occurred while reading notification "
                             + "trigger time", e);
