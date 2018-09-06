@@ -18,15 +18,18 @@ public class CustomUserOperationEventListener extends AbstractUserOperationEvent
 	@Override
     public boolean doPostAuthenticate(String userName, boolean authenticated,
                                       UserStoreManager userStoreManager) throws UserStoreException {
-		log.info("+++CustomUserOperationEventListener doPostAuthenticate STARTED");
         try {
-            HashMap<String, String> userClaims = new HashMap<>();
-            userClaims.put(NotificationConstants.LAST_LOGIN_TIME, Long.toString(System.currentTimeMillis()));
-            userStoreManager.setUserClaimValues(userName, userClaims, null);
+        	if (authenticated) {
+                HashMap<String, String> userClaims = new HashMap<>();
+                userClaims.put(NotificationConstants.LAST_LOGIN_TIME, Long.toString(System.currentTimeMillis()));
+                userStoreManager.setUserClaimValues(userName, userClaims, null);
+        	} else {
+        		//Authentication not successful
+        	}
         } catch (UserStoreException e) {
             log.error("Error occurred while updating last login claim for user: ", e);
         }
-        log.info("+++CustomUserOperationEventListener doPostAuthenticate DONE");
+        log.info("+++CustomUserOperationEventListener doPostAuthenticate");
         return true;
     }
 	
@@ -35,4 +38,17 @@ public class CustomUserOperationEventListener extends AbstractUserOperationEvent
         log.info("+++CustomUserOperationEventListener getExecutionOrderId");
 		return 1356;
 	}
+	
+    @Override
+    public boolean doPostAddUser(String userName, Object credential, String[] roleList,
+                                 Map<String, String> claims, String profile,
+                                 UserStoreManager userStoreManager)
+            throws UserStoreException {
+        HashMap<String, String> userClaims = new HashMap<>();
+        userClaims.put(NotificationConstants.LAST_LOGIN_TIME, Long.toString(System.currentTimeMillis()));
+        userClaims.put(NotificationConstants.ACCOUNT_SUSPENDED_CLAIM, Boolean.FALSE.toString());
+        userStoreManager.setUserClaimValues(userName, userClaims, null);
+        log.info("+++CustomUserOperationEventListener doPostAddUser");
+        return true;
+    }
 }

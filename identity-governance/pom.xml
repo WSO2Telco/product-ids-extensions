@@ -118,6 +118,7 @@
     <modules>
         <!--module>components/org.wso2.carbon.identity.password.history</module-->
         <module>components/org.wso2.carbon.identity.account.suspension.notification.task</module>
+        <module>components/org.wso2.carbon.identity.password.history</module>
 
         <!--module>service-stubs/identity</module>
 

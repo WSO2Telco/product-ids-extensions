@@ -15,18 +15,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.identity.account.suspension.notification.task;
+package org.wso2.carbon.identity.password.history;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.identity.account.suspension.notification.task.exception.AccountSuspensionNotificationException;
-import org.wso2.carbon.identity.account.suspension.notification.task.internal.NotificationTaskDataHolder;
-import org.wso2.carbon.identity.account.suspension.notification.task.util.EmailUtil;
-import org.wso2.carbon.identity.account.suspension.notification.task.util.NotificationConstants;
-import org.wso2.carbon.identity.account.suspension.notification.task.util.NotificationReceiver;
-import org.wso2.carbon.identity.account.suspension.notification.task.util.PropertyFileReader;
+import org.wso2.carbon.identity.password.history.exception.AccountSuspensionNotificationException;
+import org.wso2.carbon.identity.password.history.internal.NotificationTaskDataHolder;
+import org.wso2.carbon.identity.password.history.util.EmailUtil;
+import org.wso2.carbon.identity.password.history.util.NotificationConstants;
+import org.wso2.carbon.identity.password.history.util.NotificationReceiver;
+import org.wso2.carbon.identity.password.history.util.PropertyFileReader;
 import org.wso2.carbon.identity.application.common.model.Property;
 //import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
@@ -243,8 +243,6 @@ public class AccountValidatorThread implements Runnable {
                     Map<String, String> updatedClaims = new HashMap<>();
                     updatedClaims.put(NotificationConstants.ACCOUNT_SUSPENDED_CLAIM, Boolean.TRUE.toString());
                     updatedClaims.put(NotificationConstants.FAILED_LOGIN_ATTEMPTS, "0");
-                    log.info("+++AccountValidatorThread account suspended for user: " + IdentityUtil.addDomainToName(receiver.getUsername(),
-                            receiver.getUserStoreDomain()) + "@" + tenantDomain);
                     try {
                         userStoreManager.setUserClaimValues(IdentityUtil.addDomainToName(receiver.getUsername(),
                                 receiver.getUserStoreDomain()), updatedClaims, UserCoreConstants.DEFAULT_PROFILE);

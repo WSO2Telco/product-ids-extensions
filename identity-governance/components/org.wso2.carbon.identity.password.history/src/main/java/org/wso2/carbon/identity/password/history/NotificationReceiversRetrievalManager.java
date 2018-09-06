@@ -15,14 +15,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.identity.account.suspension.notification.task;
+package org.wso2.carbon.identity.password.history;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.identity.account.suspension.notification.task.exception.AccountSuspensionNotificationException;
-import org.wso2.carbon.identity.account.suspension.notification.task.internal.NotificationTaskDataHolder;
-import org.wso2.carbon.identity.account.suspension.notification.task.util.NotificationReceiver;
-import org.wso2.carbon.identity.account.suspension.notification.task.util.NotificationReceiversRetrievalUtil;
+import org.wso2.carbon.identity.password.history.exception.AccountSuspensionNotificationException;
+import org.wso2.carbon.identity.password.history.internal.NotificationTaskDataHolder;
+import org.wso2.carbon.identity.password.history.util.NotificationReceiver;
+import org.wso2.carbon.identity.password.history.util.NotificationReceiversRetrievalUtil;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -55,7 +55,7 @@ public class NotificationReceiversRetrievalManager {
                 long lookupMin;
                 try {
                     lookupMin = getCurrentExecutionTime(NotificationTaskDataHolder.getInstance().
-                            getNotificationTriggerTime()).getTimeInMillis() - TimeUnit.DAYS.toMillis(delay+2);
+                            getNotificationTriggerTime()).getTimeInMillis() - TimeUnit.DAYS.toMillis(delay+1);
                 } catch (ParseException e) {
                     throw new AccountSuspensionNotificationException("Error occurred while reading notification "
                             + "trigger time", e);
