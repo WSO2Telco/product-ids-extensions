@@ -21,15 +21,18 @@ public class CustomUserOperationEventListener extends AbstractUserOperationEvent
         try {
         	if (authenticated) {
                 HashMap<String, String> userClaims = new HashMap<>();
+        		String currentLastLoginTime = userStoreManager.getUserClaimValue(userName, NotificationConstants.LAST_LOGIN_TIME, null);
+
+                userClaims.put(NotificationConstants.PRE_LAST_LOGIN_TIME, currentLastLoginTime);
                 userClaims.put(NotificationConstants.LAST_LOGIN_TIME, Long.toString(System.currentTimeMillis()));
                 userStoreManager.setUserClaimValues(userName, userClaims, null);
+                log.info("+++CustomUserOperationEventListener doPostAuthenticate lastlogintime updated");
         	} else {
         		//Authentication not successful
         	}
         } catch (UserStoreException e) {
             log.error("Error occurred while updating last login claim for user: ", e);
         }
-        log.info("+++CustomUserOperationEventListener doPostAuthenticate");
         return true;
     }
 	
