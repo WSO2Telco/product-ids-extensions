@@ -1,0 +1,52 @@
+<mbssAuthenticatorConfig>
+    <!--Working time configs, All times are in server's local time-->
+    <workingTimes>
+        <workingTime>
+            <role>engineerRole</role> <!--Create this role first from management console UI-->
+            <start>0800</start> <!--Start of work time in 24H format-->
+            <end>1600</end> <!--End of work time in 24H format-->
+        </workingTime>
+        
+        <workingTime>
+            <role>everybodyElse</role>
+            <start>0000</start>
+            <end>2400</end>  <!--no login restrictions-->
+        </workingTime>
+        
+        <workingTime>
+            <role>nightOwl</role>
+            <start>2100</start>
+            <end>0600</end> 
+        </workingTime>
+    </workingTimes>
+    
+    <!--Error message contents-->
+    <errorMessages>
+        <accountSuspendedMessage>User account is suspended for inactivity. Please contact administrator.</accountSuspendedMessage>
+        <sessionLimitExceededMessage>Login failed because there are other active sessions. End other sessions before trying agaiin.</sessionLimitExceededMessage>
+        <invalidCredentialsMessage>Login credentials are incorrect. Please check and try again.</invalidCredentialsMessage>
+        <accountLockedMessage>User account is locked. Please contact administrator.</accountLockedMessage>
+        <loginTimeRestrictedMessage>Login failed due to login time restrictions. Contact administrator for more details.</loginTimeRestrictedMessage>
+        <passwordChangeSuccessMessage>Password changed successfully</passwordChangeSuccessMessage>
+        <passwordChangeFailedMessage>Password change failed. Please try again!</passwordChangeFailedMessage>
+        <passwordExpiredMessage>Password expired. Please renew.</passwordExpiredMessage>
+        <passwordsDoNotMatchMessage>New password confirmation failed. Check and try again!</passwordsDoNotMatchMessage>
+        <passwordRejectedByRegExPolicyMessage>New password doesn't meet the policy requirement. Try a password with Capital letters, numbers and symbols.</passwordRejectedByRegExPolicyMessage>
+        <currentPasswordInvalidMessage>Password change failed. Current Password is invalid.</currentPasswordInvalidMessage>
+        <unknownErrorMessage>Unknown error occurred.</unknownErrorMessage>
+    </errorMessages>
+    
+    <!--Enabled/Disabled statuses of individual features-->
+    <featureConfig>
+        <accountSuspensionFeature>true</accountSuspensionFeature>        
+        <loginTimeRestrictionFeature>true</loginTimeRestrictionFeature>
+        <periodicPasswordChangeFeature>false</periodicPasswordChangeFeature>
+        <sessionLimitingFeature>true</sessionLimitingFeature>
+        <maximumSessionLimit>1</maximumSessionLimit>
+    </featureConfig>
+    
+    <periodicPasswordChangeConfig>
+        <passwordChangeInterval>0</passwordChangeInterval>   <!--in days-->
+        <changePasswordAtFirstLogin>true</changePasswordAtFirstLogin>
+    </periodicPasswordChangeConfig>
+</mbssAuthenticatorConfig>
