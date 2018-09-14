@@ -6,6 +6,7 @@ import com.wso2telco.mbss.authenticator.model.MBSSAuthenticatorConfig;
 import com.wso2telco.mbss.authenticator.util.ConfigLoader;
 import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorUtils;
 import com.wso2telco.mbss.authenticator.util.SessionAuthenticatorDbUtil;
+import com.wso2telco.mbss.authenticator.util.TimeZoneUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.application.authentication.framework.AbstractApplicationAuthenticator;
@@ -27,10 +28,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Username Password based custom Authenticator
@@ -407,6 +405,10 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             return false;
         }
 
+        Locale locale = request.getLocale();
+        Calendar cal = Calendar.getInstance(locale);
+        TimeZone timeZone = cal.getTimeZone();
+
         boolean timeRestricted = false;
         String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         UserStoreManager userStoreManager = null;
@@ -423,7 +425,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
                 .getMbssAuthenticatorConfig().getWorkingTimeRoleConfig();
 
         for (MBSSAuthenticatorConfig.WorkingTime workingTime: timeList) {
-            AuthorizeRoleResponse roleResponse = authorizeLoginForRole(workingTime, username, userStoreManager);
+            AuthorizeRoleResponse roleResponse = authorizeLoginForRole(workingTime, username, userStoreManager, timeZone);
 
             if (roleResponse.getResponseType() != AuthorizeRoleResponse.RESPONSE_TYPE_OK) {
                 context.setProperty(MBSSAuthenticatorConstants.FAILED_REASON,
@@ -446,7 +448,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
      * @return AuthorizeRoleResponse
      */
     private AuthorizeRoleResponse authorizeLoginForRole(MBSSAuthenticatorConfig.WorkingTime config, String username,
-                                                        UserStoreManager userStoreManager) {
+                                                        UserStoreManager userStoreManager, TimeZone timeZone) {
 
         try {
             AbstractUserStoreManager abstractUserStoreManager = ((AbstractUserStoreManager) userStoreManager);
@@ -454,7 +456,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
 
             if (abstractUserStoreManager != null) {
                 if (abstractUserStoreManager.isUserInRole(username, config.getRole())) {
-                    boolean authorized = isLoginAllowedByTimeConfig(config);
+                    boolean authorized = isLoginAllowedByTimeConfig(config, timeZone);
 
                     if (!authorized) {
                         return new AuthorizeRoleResponse(AuthorizeRoleResponse.RESPONSE_TYPE_RESTRICTED_TIME,
@@ -476,12 +478,16 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
      * @param config MBSSAuthenticatorConfig.WorkingTime represents a work time configuration for a role
      * @return true if time of login is within specified time period in configuration, false otherwise.
      */
-    private boolean isLoginAllowedByTimeConfig(MBSSAuthenticatorConfig.WorkingTime config) {
+    private boolean isLoginAllowedByTimeConfig(MBSSAuthenticatorConfig.WorkingTime config, TimeZone timeZone) {
         try {
             Date start = new SimpleDateFormat("HHmm").parse(config.getStartTime());
             Date end = new SimpleDateFormat("HHmm").parse(config.getEndTime());
-            Date current = new SimpleDateFormat("HHmm")
-                    .parse(new SimpleDateFormat("HHmm").format(new Date()));
+            Date current = TimeZoneUtils.currentSystemTimeInTimeZone(timeZone);
+
+            if (current == null) {
+                log.warn("Failed to calculate user's local time. Work time authenticator will not work properly.");
+                current = new SimpleDateFormat("HHmm").parse(new SimpleDateFormat("HHmm").format(new Date()));
+            }
 
             if (end.before(start)) {
                 //ranges are scattered across 2 days, add one day to end date and compare
