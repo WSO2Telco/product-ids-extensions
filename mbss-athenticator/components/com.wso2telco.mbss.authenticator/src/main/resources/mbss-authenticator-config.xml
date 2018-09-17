@@ -36,7 +36,7 @@
     <errorMessages>
         <accountSuspendedMessage>User account is suspended for inactivity. Please contact administrator.</accountSuspendedMessage>
         <sessionLimitExceededMessage>Login failed because there are other active sessions. End other sessions before trying agaiin.</sessionLimitExceededMessage>
-        <invalidCredentialsMessage>Login credentials are incorrect. Please check and try again.</invalidCredentialsMessage>
+        <invalidCredentialsMessage>Unauthorized use of Celcoms applications is prohibited.</invalidCredentialsMessage>
         <accountLockedMessage>User account is locked. Please contact administrator.</accountLockedMessage>
         <loginTimeRestrictedMessage>Login failed due to login time restrictions. Contact administrator for more details.</loginTimeRestrictedMessage>
         <passwordChangeSuccessMessage>Password changed successfully</passwordChangeSuccessMessage>
@@ -52,7 +52,7 @@
     <featureConfig>
         <accountSuspensionFeature>true</accountSuspensionFeature>        
         <loginTimeRestrictionFeature>true</loginTimeRestrictionFeature>
-        <periodicPasswordChangeFeature>true</periodicPasswordChangeFeature>
+        <periodicPasswordChangeFeature>false</periodicPasswordChangeFeature>
         <sessionLimitingFeature>true</sessionLimitingFeature>
         <maximumSessionLimit>2</maximumSessionLimit>
     </featureConfig>
