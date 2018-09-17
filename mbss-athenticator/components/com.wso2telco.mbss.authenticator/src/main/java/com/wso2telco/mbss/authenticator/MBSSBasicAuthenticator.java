@@ -5,7 +5,7 @@ import com.wso2telco.mbss.authenticator.model.AuthorizeRoleResponse;
 import com.wso2telco.mbss.authenticator.model.MBSSAuthenticatorConfig;
 import com.wso2telco.mbss.authenticator.util.ConfigLoader;
 import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorUtils;
-import com.wso2telco.mbss.authenticator.util.SessionAuthenticatorDbUtil;
+import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorDbUtil;
 import com.wso2telco.mbss.authenticator.util.TimeZoneUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -373,7 +373,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         String serviceProviderName = context.getServiceProviderName();
         boolean allowed = false;
         try {
-            int cachedActiveSessions = SessionAuthenticatorDbUtil.getActiveSessionCount(username + ":"
+            int cachedActiveSessions = MBSSAuthenticatorDbUtil.getActiveSessionCount(username + ":"
                     + serviceProviderName);
             if (cachedActiveSessions < maximumSessionCount) {
                 allowed = true;

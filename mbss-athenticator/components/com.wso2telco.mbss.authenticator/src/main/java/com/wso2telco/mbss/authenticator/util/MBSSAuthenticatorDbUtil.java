@@ -10,11 +10,11 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
 
-public class SessionAuthenticatorDbUtil {
+public class MBSSAuthenticatorDbUtil {
     private static volatile DataSource carbonDbDatasource = null;
-    private static final Log log = LogFactory.getLog(SessionAuthenticatorDbUtil.class);
+    private static final Log log = LogFactory.getLog(MBSSAuthenticatorDbUtil.class);
 
-    private static void initializeConnectDatasource() throws NamingException {
+    private static void initializeIndentityDatasource() throws NamingException {
         if (carbonDbDatasource != null) {
             return;
         }
@@ -29,7 +29,7 @@ public class SessionAuthenticatorDbUtil {
 
     private static Connection getIdentityDbConnection() throws SQLException {
         try {
-            initializeConnectDatasource();
+            initializeIndentityDatasource();
         } catch (NamingException e) {
             log.error("Error initializing carbonDb datasource", e);
             return null;
