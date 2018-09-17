@@ -108,7 +108,6 @@
                         <Export-Package>
                             !com.wso2telco.mbss.authenticator.internal,
                             com.wso2telco.mbss.authenticator.*;
-                            com.wso2telco.mbss.authenticator.util.*;
                             version="1.0.0"
                         </Export-Package>
                     </instructions>

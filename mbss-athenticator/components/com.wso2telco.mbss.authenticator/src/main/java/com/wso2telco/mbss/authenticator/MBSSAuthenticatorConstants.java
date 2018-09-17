@@ -18,6 +18,7 @@ public abstract class MBSSAuthenticatorConstants {
 
     public static final String ACCOUNT_SUSPENDED_CLAIM = "http://wso2.org/claims/identity/accountSuspended";
     public static final String LAST_PASSWORD_CHANGE_CLAIM = "http://wso2.org/claims/identity/lastPasswordUpdateTime";
+    public static final String TIME_ZONE_CLAIM = "http://wso2.org/claims/identity/timeZone";
 
     public static final String FAILED_REASON = "authorizationFailedReason";
     public static final String FAILED_REASON_CAUSE = "authorizationFailedReasonCause";

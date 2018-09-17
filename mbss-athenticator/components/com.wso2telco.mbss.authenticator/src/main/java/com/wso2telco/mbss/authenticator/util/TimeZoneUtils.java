@@ -9,18 +9,27 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class TimeZoneUtils {
-    public static Date currentSystemTimeInTimeZone(TimeZone timeZone) {
-        ZoneId zoneId = ZoneId.of(timeZone.getID());
-        LocalDateTime ldt = LocalDateTime.now(zoneId);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hhmm");
+    /**
+     * Calculated the current time in provided timezone ID.
+     * @param timeZoneId Target Timezone ID.
+     * @return Current time in provided Timezone ID, null if timeZOneId is null.
+     */
+    public static Date currentTimeInTimeZone(String timeZoneId) {
+        if (timeZoneId == null) {
+            return null;
+        }
 
-        Date date = null;
+        TimeZone timeZone = TimeZone.getTimeZone(timeZoneId);
+        SimpleDateFormat formatter = new SimpleDateFormat("HHmm");
+        formatter.setTimeZone(timeZone);
+
+        Date dateInTimeZone = null;
         try {
-            date = new SimpleDateFormat("HHmm").parse(formatter.format(ldt));
+            dateInTimeZone = new SimpleDateFormat("HHmm").parse(formatter.format(new Date()));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        return date;
+        return dateInTimeZone;
     }
 }
