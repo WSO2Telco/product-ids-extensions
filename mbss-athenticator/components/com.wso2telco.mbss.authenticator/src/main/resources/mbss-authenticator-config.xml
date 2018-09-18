@@ -54,7 +54,7 @@
         <loginTimeRestrictionFeature>true</loginTimeRestrictionFeature>
         <periodicPasswordChangeFeature>true</periodicPasswordChangeFeature>
         <sessionLimitingFeature>true</sessionLimitingFeature>
-        <maximumSessionLimit>2</maximumSessionLimit>
+        <maximumSessionLimit>1</maximumSessionLimit>
     </featureConfig>
     
     <periodicPasswordChangeConfig>

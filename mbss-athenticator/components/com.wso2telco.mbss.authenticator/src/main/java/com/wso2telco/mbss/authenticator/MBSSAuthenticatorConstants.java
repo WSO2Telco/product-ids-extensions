@@ -20,6 +20,7 @@ public abstract class MBSSAuthenticatorConstants {
     public static final String LAST_PASSWORD_CHANGE_CLAIM = "http://wso2.org/claims/identity/lastPasswordUpdateTime";
     public static final String UTC_OFFSET_CLAIM = "http://wso2.org/claims/identity/utcOffset";
     public static final String DST_OFFSET_CLAIM = "http://wso2.org/claims/identity/dstOffset";
+    public static final String INITIAL_PASSWORD_CHANGED_CLAIM = "http://wso2.org/claims/identity/initialPasswordChanged";
 
     public static final String FAILED_REASON = "authorizationFailedReason";
     public static final String FAILED_REASON_CAUSE = "authorizationFailedReasonCause";

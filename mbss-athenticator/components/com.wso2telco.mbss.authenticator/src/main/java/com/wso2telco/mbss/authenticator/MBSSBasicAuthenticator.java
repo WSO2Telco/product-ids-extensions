@@ -239,7 +239,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
     public boolean canHandle(HttpServletRequest httpServletRequest) {
         String userName = httpServletRequest.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         String password = httpServletRequest.getParameter(MBSSAuthenticatorConstants.PASSWORD);
-        Map<String, String[]> map = httpServletRequest.getParameterMap();
         boolean canHandle = false;
         if (userName != null && password != null) {
             canHandle = true;
@@ -541,12 +540,20 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         boolean expired = false;
         long currentTime = System.currentTimeMillis();
         long lastPasswordChangeTime = -1l;
+        String initialPasswordChangedClaimValue = null;
 
         try {
             int tenantId = MBSSAuthenticatorServiceComponent.getRealmService().getTenantManager().
                     getTenantId(MultitenantUtils.getTenantDomain(username));
             UserStoreManager userStoreManager = (UserStoreManager) MBSSAuthenticatorServiceComponent
                     .getRealmService().getTenantUserRealm(tenantId).getUserStoreManager();
+
+            initialPasswordChangedClaimValue = userStoreManager.getUserClaimValue(username,
+                    MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM, null);
+            if (initialPasswordChangedClaimValue == null) {
+                userStoreManager.setUserClaimValue(username, MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM,
+                        "true", null);
+            }
 
             String lastPasswordChangeClaimValue = userStoreManager.getUserClaimValue(username,
                     MBSSAuthenticatorConstants.LAST_PASSWORD_CHANGE_CLAIM, null);
@@ -562,17 +569,18 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             context.setProperty(MBSSAuthenticatorConstants.FAILED_REASON_CAUSE, e.getMessage());
         }
 
-        if (lastPasswordChangeTime != -1) {
+        if (initialPasswordChangedClaimValue == null) {
+            if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
+                    .isChangePasswordAtFirstLogin()){
+                expired = true;
+            }
+        } else if (lastPasswordChangeTime != -1) {
             long unchangedDurationInMillis = currentTime - lastPasswordChangeTime;
             long expireIntervalInMillis = expireInterval * 24 * 60 * 60 * 1000;
 
             if (unchangedDurationInMillis > expireIntervalInMillis) {
                 expired = true;
             }
-        } else if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
-                .isChangePasswordAtFirstLogin()){
-
-            expired = true;
         }
 
         if (expired) {
