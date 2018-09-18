@@ -18,18 +18,6 @@
             <start>2100</start>
             <end>0600</end> 
         </workingTime>
-
-        <workingTime>
-            <role>time1</role>
-            <start>1240</start>
-            <end>1300</end>
-        </workingTime>
-
-        <workingTime>
-            <role>time2</role>
-            <start>1400</start>
-            <end>1500</end>
-        </workingTime>
     </workingTimes>
     
     <!--Error message contents-->
@@ -54,7 +42,7 @@
         <loginTimeRestrictionFeature>true</loginTimeRestrictionFeature>
         <periodicPasswordChangeFeature>false</periodicPasswordChangeFeature>
         <sessionLimitingFeature>true</sessionLimitingFeature>
-        <maximumSessionLimit>2</maximumSessionLimit>
+        <maximumSessionLimit>1</maximumSessionLimit>
     </featureConfig>
     
     <periodicPasswordChangeConfig>
