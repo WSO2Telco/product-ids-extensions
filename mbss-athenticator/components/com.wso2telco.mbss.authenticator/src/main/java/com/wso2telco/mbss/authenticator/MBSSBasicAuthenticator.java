@@ -3,6 +3,7 @@ package com.wso2telco.mbss.authenticator;
 import com.wso2telco.mbss.authenticator.internal.MBSSAuthenticatorServiceComponent;
 import com.wso2telco.mbss.authenticator.model.AuthorizeRoleResponse;
 import com.wso2telco.mbss.authenticator.model.MBSSAuthenticatorConfig;
+import com.wso2telco.mbss.authenticator.model.TimeOffset;
 import com.wso2telco.mbss.authenticator.util.ConfigLoader;
 import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorUtils;
 import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorDbUtil;
@@ -405,7 +406,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             return false;
         }
 
-        String timeZoneClaimValue = null;
         String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         UserStoreManager userStoreManager = null;
         try {
@@ -414,8 +414,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             userStoreManager = (UserStoreManager) MBSSAuthenticatorServiceComponent
                     .getRealmService().getTenantUserRealm(tenantId).getUserStoreManager();
 
-            timeZoneClaimValue = userStoreManager.getUserClaimValue(username,
-                    MBSSAuthenticatorConstants.TIME_ZONE_CLAIM, null);
         } catch (UserStoreException e) {
             log.error(e.getMessage(), e);
         }
@@ -425,7 +423,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
 
         boolean timeRestricted = false;
         for (MBSSAuthenticatorConfig.WorkingTime workingTime: timeList) {
-            AuthorizeRoleResponse roleResponse = authorizeLoginForRole(workingTime, username, userStoreManager, timeZoneClaimValue);
+            AuthorizeRoleResponse roleResponse = authorizeLoginForRole(workingTime, username, userStoreManager);
 
             if (roleResponse.getResponseType() != AuthorizeRoleResponse.RESPONSE_TYPE_OK) {
                 context.setProperty(MBSSAuthenticatorConstants.FAILED_REASON,
@@ -448,15 +446,21 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
      * @return AuthorizeRoleResponse
      */
     private AuthorizeRoleResponse authorizeLoginForRole(MBSSAuthenticatorConfig.WorkingTime config, String username,
-                                                        UserStoreManager userStoreManager, String timeZoneId) {
+                                                        UserStoreManager userStoreManager) {
 
         try {
             AbstractUserStoreManager abstractUserStoreManager = ((AbstractUserStoreManager) userStoreManager);
 
+            String utcOffsetClaim = userStoreManager.getUserClaimValue(username,
+                    MBSSAuthenticatorConstants.UTC_OFFSET_CLAIM, null);
+            String dstOffsetClaim = userStoreManager.getUserClaimValue(username,
+                                MBSSAuthenticatorConstants.DST_OFFSET_CLAIM, null);
+
+
 
             if (abstractUserStoreManager != null) {
                 if (abstractUserStoreManager.isUserInRole(username, config.getRole())) {
-                    boolean authorized = isLoginAllowedByTimeConfig(config, timeZoneId);
+                    boolean authorized = isLoginAllowedByTimeConfig(config, utcOffsetClaim, dstOffsetClaim);
 
                     if (!authorized) {
                         return new AuthorizeRoleResponse(AuthorizeRoleResponse.RESPONSE_TYPE_RESTRICTED_TIME,
@@ -478,17 +482,25 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
      * @param config MBSSAuthenticatorConfig.WorkingTime represents a work time configuration for a role
      * @return true if time of login is within specified time period in configuration, false otherwise.
      */
-    private boolean isLoginAllowedByTimeConfig(MBSSAuthenticatorConfig.WorkingTime config, String timeZoneId) {
+    private boolean isLoginAllowedByTimeConfig(MBSSAuthenticatorConfig.WorkingTime config, String utcOffset, String dstOffset) {
+
+        TimeOffset utcTimeOffset = TimeZoneUtils.decodeOffsetString(utcOffset);
+        TimeOffset dstTimeOffset = TimeZoneUtils.decodeOffsetString(dstOffset);
+        TimeZone timeZone = TimeZone.getDefault();
+        long systemOffset = (long)timeZone.getOffset(new Date().getTime());
+
+        long userTime = 0l;
+        if (utcTimeOffset != null && dstOffset != null) {
+            userTime = (System.currentTimeMillis() - systemOffset) + utcTimeOffset.getMillis() + dstTimeOffset.getMillis();
+        } else {
+            userTime = System.currentTimeMillis();
+            log.warn("UTC time offset is null. User will be assumed to be in same timezone as server.");
+        }
+
         try {
+            Date currentUserTime = new SimpleDateFormat("HHmm").parse(new SimpleDateFormat("HHmm").format(new Date(userTime)));
             Date start = new SimpleDateFormat("HHmm").parse(config.getStartTime());
             Date end = new SimpleDateFormat("HHmm").parse(config.getEndTime());
-            Date current = TimeZoneUtils.currentTimeInTimeZone(timeZoneId);
-
-            if (current == null) {
-                log.warn("Failed to calculate user's local time. Work time authenticator will not work properly. " +
-                        "Assign TimeZone claim value to user to resolve this issue.");
-                current = new SimpleDateFormat("HHmm").parse(new SimpleDateFormat("HHmm").format(new Date()));
-            }
 
             if (end.before(start)) {
                 //ranges are scattered across 2 days, add one day to end date and compare
@@ -498,10 +510,10 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
 
                 Date correctedEnd = calendar.getTime();
 
-                return start.before(current) && correctedEnd.after(current);
+                return start.before(currentUserTime) && correctedEnd.after(currentUserTime);
             }
             //ranges are within same day
-            return start.before(current) && end.after(current);
+            return start.before(currentUserTime) && end.after(currentUserTime);
         } catch (ParseException e) {
             log.error("Error occurred while checking authorized login times.", e);
             return true;
