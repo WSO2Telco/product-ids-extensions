@@ -239,7 +239,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
     public boolean canHandle(HttpServletRequest httpServletRequest) {
         String userName = httpServletRequest.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         String password = httpServletRequest.getParameter(MBSSAuthenticatorConstants.PASSWORD);
-        Map<String, String[]> map = httpServletRequest.getParameterMap();
         boolean canHandle = false;
         if (userName != null && password != null) {
             canHandle = true;
