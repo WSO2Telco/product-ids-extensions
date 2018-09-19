@@ -1,6 +1,7 @@
 <mbssAuthenticatorConfig>
     <!--Working time configs, All times are in server's local time-->
     <workingTimes>
+        <!--The following wotkingTime definitions are samples. Feel free to change according to your requirements.-->
         <workingTime>
             <role>engineerRole</role> <!--Create this role first from management console UI-->
             <start>0800</start> <!--Start of work time in 24H format-->
@@ -17,18 +18,6 @@
             <role>nightOwl</role>
             <start>2100</start>
             <end>0600</end> 
-        </workingTime>
-
-        <workingTime>
-            <role>time1</role>
-            <start>1240</start>
-            <end>1300</end>
-        </workingTime>
-
-        <workingTime>
-            <role>time2</role>
-            <start>1400</start>
-            <end>1500</end>
         </workingTime>
     </workingTimes>
     

@@ -489,11 +489,19 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         long systemOffset = (long)timeZone.getOffset(new Date().getTime());
 
         long userTime = 0l;
-        if (utcTimeOffset != null && dstOffset != null) {
-            userTime = (System.currentTimeMillis() - systemOffset) + utcTimeOffset.getMillis() + dstTimeOffset.getMillis();
+        if (utcTimeOffset != null) {
+            userTime = (System.currentTimeMillis() - systemOffset) + utcTimeOffset.getMillis();
         } else {
             userTime = System.currentTimeMillis();
             log.warn("UTC time offset is null. User will be assumed to be in same timezone as server.");
+        }
+
+        if (dstTimeOffset != null) {
+            userTime += dstTimeOffset.getMillis();
+        } else {
+            if (log.isDebugEnabled()) {
+                log.warn("Daylight Saving Time offset is not defined. Used default offset of 0");
+            }
         }
 
         try {
@@ -501,18 +509,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             Date start = new SimpleDateFormat("HHmm").parse(config.getStartTime());
             Date end = new SimpleDateFormat("HHmm").parse(config.getEndTime());
 
-            if (end.before(start)) {
-                //ranges are scattered across 2 days, add one day to end date and compare
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(end);
-                calendar.add(Calendar.DATE, 1);
-
-                Date correctedEnd = calendar.getTime();
-
-                return start.before(currentUserTime) && correctedEnd.after(currentUserTime);
-            }
-            //ranges are within same day
-            return start.before(currentUserTime) && end.after(currentUserTime);
+            return TimeZoneUtils.isTimeBetween(start, end, currentUserTime);
         } catch (ParseException e) {
             log.error("Error occurred while checking authorized login times.", e);
             return true;
