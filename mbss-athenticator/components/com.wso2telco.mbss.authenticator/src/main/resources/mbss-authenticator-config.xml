@@ -1,6 +1,7 @@
 <mbssAuthenticatorConfig>
     <!--Working time configs, All times are in server's local time-->
     <workingTimes>
+        <!--The following wotkingTime definitions are samples. Feel free to change according to your requirements.-->
         <workingTime>
             <role>engineerRole</role> <!--Create this role first from management console UI-->
             <start>0800</start> <!--Start of work time in 24H format-->
@@ -24,12 +25,12 @@
     <errorMessages>
         <accountSuspendedMessage>User account is suspended for inactivity. Please contact administrator.</accountSuspendedMessage>
         <sessionLimitExceededMessage>Login failed because there are other active sessions. End other sessions before trying agaiin.</sessionLimitExceededMessage>
-        <invalidCredentialsMessage>Login credentials are incorrect. Please check and try again.</invalidCredentialsMessage>
+        <invalidCredentialsMessage>Unauthorized use of Celcoms applications is prohibited.</invalidCredentialsMessage>
         <accountLockedMessage>User account is locked. Please contact administrator.</accountLockedMessage>
         <loginTimeRestrictedMessage>Login failed due to login time restrictions. Contact administrator for more details.</loginTimeRestrictedMessage>
         <passwordChangeSuccessMessage>Password changed successfully</passwordChangeSuccessMessage>
         <passwordChangeFailedMessage>Password change failed. Please try again!</passwordChangeFailedMessage>
-        <passwordExpiredMessage>Password expired. Please renew.</passwordExpiredMessage>
+        <passwordExpiredMessage>Password expired. Please renew your password here.</passwordExpiredMessage>
         <passwordsDoNotMatchMessage>New password confirmation failed. Check and try again!</passwordsDoNotMatchMessage>
         <passwordRejectedByRegExPolicyMessage>New password doesn't meet the policy requirement. Try a password with Capital letters, numbers and symbols.</passwordRejectedByRegExPolicyMessage>
         <currentPasswordInvalidMessage>Password change failed. Current Password is invalid.</currentPasswordInvalidMessage>
@@ -46,7 +47,7 @@
     </featureConfig>
     
     <periodicPasswordChangeConfig>
-        <passwordChangeInterval>0</passwordChangeInterval>   <!--in days-->
+        <passwordChangeInterval>60</passwordChangeInterval>   <!--in days-->
         <changePasswordAtFirstLogin>true</changePasswordAtFirstLogin>
     </periodicPasswordChangeConfig>
 </mbssAuthenticatorConfig>

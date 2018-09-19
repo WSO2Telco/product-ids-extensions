@@ -3,9 +3,11 @@ package com.wso2telco.mbss.authenticator;
 import com.wso2telco.mbss.authenticator.internal.MBSSAuthenticatorServiceComponent;
 import com.wso2telco.mbss.authenticator.model.AuthorizeRoleResponse;
 import com.wso2telco.mbss.authenticator.model.MBSSAuthenticatorConfig;
+import com.wso2telco.mbss.authenticator.model.TimeOffset;
 import com.wso2telco.mbss.authenticator.util.ConfigLoader;
 import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorUtils;
-import com.wso2telco.mbss.authenticator.util.SessionAuthenticatorDbUtil;
+import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorDbUtil;
+import com.wso2telco.mbss.authenticator.util.TimeZoneUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.application.authentication.framework.AbstractApplicationAuthenticator;
@@ -27,10 +29,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Username Password based custom Authenticator
@@ -240,7 +239,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
     public boolean canHandle(HttpServletRequest httpServletRequest) {
         String userName = httpServletRequest.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         String password = httpServletRequest.getParameter(MBSSAuthenticatorConstants.PASSWORD);
-        Map<String, String[]> map = httpServletRequest.getParameterMap();
         boolean canHandle = false;
         if (userName != null && password != null) {
             canHandle = true;
@@ -375,7 +373,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         String serviceProviderName = context.getServiceProviderName();
         boolean allowed = false;
         try {
-            int cachedActiveSessions = SessionAuthenticatorDbUtil.getActiveSessionCount(username + ":"
+            int cachedActiveSessions = MBSSAuthenticatorDbUtil.getActiveSessionCount(username + ":"
                     + serviceProviderName);
             if (cachedActiveSessions < maximumSessionCount) {
                 allowed = true;
@@ -407,7 +405,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             return false;
         }
 
-        boolean timeRestricted = false;
         String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         UserStoreManager userStoreManager = null;
         try {
@@ -415,6 +412,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
                     getTenantId(MultitenantUtils.getTenantDomain(username));
             userStoreManager = (UserStoreManager) MBSSAuthenticatorServiceComponent
                     .getRealmService().getTenantUserRealm(tenantId).getUserStoreManager();
+
         } catch (UserStoreException e) {
             log.error(e.getMessage(), e);
         }
@@ -422,6 +420,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         List<MBSSAuthenticatorConfig.WorkingTime> timeList = ConfigLoader.getInstance()
                 .getMbssAuthenticatorConfig().getWorkingTimeRoleConfig();
 
+        boolean timeRestricted = false;
         for (MBSSAuthenticatorConfig.WorkingTime workingTime: timeList) {
             AuthorizeRoleResponse roleResponse = authorizeLoginForRole(workingTime, username, userStoreManager);
 
@@ -451,10 +450,16 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         try {
             AbstractUserStoreManager abstractUserStoreManager = ((AbstractUserStoreManager) userStoreManager);
 
+            String utcOffsetClaim = userStoreManager.getUserClaimValue(username,
+                    MBSSAuthenticatorConstants.UTC_OFFSET_CLAIM, null);
+            String dstOffsetClaim = userStoreManager.getUserClaimValue(username,
+                                MBSSAuthenticatorConstants.DST_OFFSET_CLAIM, null);
+
+
 
             if (abstractUserStoreManager != null) {
                 if (abstractUserStoreManager.isUserInRole(username, config.getRole())) {
-                    boolean authorized = isLoginAllowedByTimeConfig(config);
+                    boolean authorized = isLoginAllowedByTimeConfig(config, utcOffsetClaim, dstOffsetClaim);
 
                     if (!authorized) {
                         return new AuthorizeRoleResponse(AuthorizeRoleResponse.RESPONSE_TYPE_RESTRICTED_TIME,
@@ -476,25 +481,35 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
      * @param config MBSSAuthenticatorConfig.WorkingTime represents a work time configuration for a role
      * @return true if time of login is within specified time period in configuration, false otherwise.
      */
-    private boolean isLoginAllowedByTimeConfig(MBSSAuthenticatorConfig.WorkingTime config) {
+    private boolean isLoginAllowedByTimeConfig(MBSSAuthenticatorConfig.WorkingTime config, String utcOffset, String dstOffset) {
+
+        TimeOffset utcTimeOffset = TimeZoneUtils.decodeOffsetString(utcOffset);
+        TimeOffset dstTimeOffset = TimeZoneUtils.decodeOffsetString(dstOffset);
+        TimeZone timeZone = TimeZone.getDefault();
+        long systemOffset = (long)timeZone.getOffset(new Date().getTime());
+
+        long userTime = 0l;
+        if (utcTimeOffset != null) {
+            userTime = (System.currentTimeMillis() - systemOffset) + utcTimeOffset.getMillis();
+        } else {
+            userTime = System.currentTimeMillis();
+            log.warn("UTC time offset is null. User will be assumed to be in same timezone as server.");
+        }
+
+        if (dstTimeOffset != null) {
+            userTime += dstTimeOffset.getMillis();
+        } else {
+            if (log.isDebugEnabled()) {
+                log.warn("Daylight Saving Time offset is not defined. Used default offset of 0");
+            }
+        }
+
         try {
+            Date currentUserTime = new SimpleDateFormat("HHmm").parse(new SimpleDateFormat("HHmm").format(new Date(userTime)));
             Date start = new SimpleDateFormat("HHmm").parse(config.getStartTime());
             Date end = new SimpleDateFormat("HHmm").parse(config.getEndTime());
-            Date current = new SimpleDateFormat("HHmm")
-                    .parse(new SimpleDateFormat("HHmm").format(new Date()));
 
-            if (end.before(start)) {
-                //ranges are scattered across 2 days, add one day to end date and compare
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(end);
-                calendar.add(Calendar.DATE, 1);
-
-                Date correctedEnd = calendar.getTime();
-
-                return start.before(current) && correctedEnd.after(current);
-            }
-            //ranges are within same day
-            return start.before(current) && end.after(current);
+            return TimeZoneUtils.isTimeBetween(start, end, currentUserTime);
         } catch (ParseException e) {
             log.error("Error occurred while checking authorized login times.", e);
             return true;
@@ -522,12 +537,20 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         boolean expired = false;
         long currentTime = System.currentTimeMillis();
         long lastPasswordChangeTime = -1l;
+        String initialPasswordChangedClaimValue = null;
 
         try {
             int tenantId = MBSSAuthenticatorServiceComponent.getRealmService().getTenantManager().
                     getTenantId(MultitenantUtils.getTenantDomain(username));
             UserStoreManager userStoreManager = (UserStoreManager) MBSSAuthenticatorServiceComponent
                     .getRealmService().getTenantUserRealm(tenantId).getUserStoreManager();
+
+            initialPasswordChangedClaimValue = userStoreManager.getUserClaimValue(username,
+                    MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM, null);
+            if (initialPasswordChangedClaimValue == null) {
+                userStoreManager.setUserClaimValue(username, MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM,
+                        "true", null);
+            }
 
             String lastPasswordChangeClaimValue = userStoreManager.getUserClaimValue(username,
                     MBSSAuthenticatorConstants.LAST_PASSWORD_CHANGE_CLAIM, null);
@@ -543,17 +566,18 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             context.setProperty(MBSSAuthenticatorConstants.FAILED_REASON_CAUSE, e.getMessage());
         }
 
-        if (lastPasswordChangeTime != -1) {
+        if (initialPasswordChangedClaimValue == null) {
+            if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
+                    .isChangePasswordAtFirstLogin()){
+                expired = true;
+            }
+        } else if (lastPasswordChangeTime != -1) {
             long unchangedDurationInMillis = currentTime - lastPasswordChangeTime;
             long expireIntervalInMillis = expireInterval * 24 * 60 * 60 * 1000;
 
             if (unchangedDurationInMillis > expireIntervalInMillis) {
                 expired = true;
             }
-        } else if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
-                .isChangePasswordAtFirstLogin()){
-
-            expired = true;
         }
 
         if (expired) {

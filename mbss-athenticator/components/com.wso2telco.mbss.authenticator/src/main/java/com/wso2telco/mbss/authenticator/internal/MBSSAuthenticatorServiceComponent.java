@@ -6,7 +6,7 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.identity.application.authentication.framework.ApplicationAuthenticator;
 import org.wso2.carbon.user.core.service.RealmService;
 import com.wso2telco.mbss.authenticator.MBSSBasicAuthenticator;
-import com.wso2telco.mbss.authenticator.util.SessionAuthenticatorDbUtil;
+import com.wso2telco.mbss.authenticator.util.MBSSAuthenticatorDbUtil;
 
 
 /**
@@ -36,14 +36,14 @@ public class MBSSAuthenticatorServiceComponent {
             log.error("MBSSAuthenticator bundle activation Failed", e);
         }
 
-        SessionAuthenticatorDbUtil.removeOutdatedSessionData();
+        MBSSAuthenticatorDbUtil.removeOutdatedSessionData();
     }
 
     protected void deactivate(ComponentContext ctxt) {
         if (log.isDebugEnabled()) {
             log.debug("MBSSAuthenticator removing old session data.");
         }
-        SessionAuthenticatorDbUtil.removeOutdatedSessionData();
+        MBSSAuthenticatorDbUtil.removeOutdatedSessionData();
         if (log.isDebugEnabled()) {
             log.info("MBSSAuthenticator bundle is deactivated");
         }

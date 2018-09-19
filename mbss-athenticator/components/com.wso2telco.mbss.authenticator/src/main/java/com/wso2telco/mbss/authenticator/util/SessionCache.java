@@ -15,7 +15,7 @@ public class SessionCache {
                     new CacheLoader<String, Integer>() {
                         @Override
                         public Integer load(String key) throws Exception {
-                            return SessionAuthenticatorDbUtil.getActiveSessionCount(key);
+                            return MBSSAuthenticatorDbUtil.getActiveSessionCount(key);
                         }
                     }
             );
