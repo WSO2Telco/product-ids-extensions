@@ -79,6 +79,7 @@ public class MBSSAuthenticatorConfig {
         private boolean loginTimeRestrictionEnabled;
         private boolean periodicPasswordChangeEnabled;
         private int maximumSessionLimit;
+        private long sessionTimeout;
 
         @XmlElement(name = "accountSuspensionFeature")
         public boolean isAccountSuspensionEnabled() {
@@ -123,6 +124,15 @@ public class MBSSAuthenticatorConfig {
 
         public void setMaximumSessionLimit(int maximumSessionLimit) {
             this.maximumSessionLimit = maximumSessionLimit;
+        }
+
+        @XmlElement(name = "sessionTimeout")
+        public long getSessionTimeout() {
+            return sessionTimeout;
+        }
+
+        public void setSessionTimeout(long sessionTimeout) {
+            this.sessionTimeout = sessionTimeout;
         }
     }
 

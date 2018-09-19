@@ -41,9 +41,10 @@
     <featureConfig>
         <accountSuspensionFeature>true</accountSuspensionFeature>        
         <loginTimeRestrictionFeature>true</loginTimeRestrictionFeature>
-        <periodicPasswordChangeFeature>false</periodicPasswordChangeFeature>
+        <periodicPasswordChangeFeature>true</periodicPasswordChangeFeature>
         <sessionLimitingFeature>true</sessionLimitingFeature>
         <maximumSessionLimit>1</maximumSessionLimit>
+        <sessionTimeout>1800</sessionTimeout> <!--In seconds-->
     </featureConfig>
     
     <periodicPasswordChangeConfig>

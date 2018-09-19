@@ -52,18 +52,22 @@ public class MBSSAuthenticatorDbUtil {
         }
     }
 
-    public static int getActiveSessionCount(String key) throws SQLException {
+    public static int getActiveSessionCount(String key, long sessionTimeout) throws SQLException {
         String keys[] = key.split(":");
         String username = keys[0];
         String serviceProviderName = keys[1];
 
+        long currentTime = System.currentTimeMillis();
+
         String sql = "SELECT COUNT(SESSION_ID) FROM IDN_AUTH_SESSION_INFO WHERE USERNAME = ? AND " +
                 "SERVICE_PROVIDER = ? AND " +
-                "floor(TERMINATION_TIME/1000) > unix_timestamp()";
+                "(START_TIME + ?) > ?";
         Connection con = getIdentityDbConnection();
         PreparedStatement prep = con.prepareStatement(sql);
         prep.setString(1, username);
         prep.setString(2, serviceProviderName);
+        prep.setLong(3, sessionTimeout * 1000); //converting session timeout to milliseconds
+        prep.setLong(4, currentTime);
         ResultSet res = prep.executeQuery();
 
         int activeSessionCount = -1;

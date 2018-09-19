@@ -52,12 +52,6 @@
             <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
             <version>5.2.2</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>24.1.1-jre</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -99,7 +93,6 @@
                         <Import-Package>
                             javax.servlet,
                             javax.servlet.http,
-                            com.google.common.cache.*;version="[19.0,24.1.1-jre)",
                             *;resolution:=optional
                         </Import-Package>
                         <Private-Package>
