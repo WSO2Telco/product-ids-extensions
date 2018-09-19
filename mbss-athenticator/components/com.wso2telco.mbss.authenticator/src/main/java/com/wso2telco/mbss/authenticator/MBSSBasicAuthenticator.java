@@ -489,11 +489,19 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         long systemOffset = (long)timeZone.getOffset(new Date().getTime());
 
         long userTime = 0l;
-        if (utcTimeOffset != null && dstOffset != null) {
-            userTime = (System.currentTimeMillis() - systemOffset) + utcTimeOffset.getMillis() + dstTimeOffset.getMillis();
+        if (utcTimeOffset != null) {
+            userTime = (System.currentTimeMillis() - systemOffset) + utcTimeOffset.getMillis();
         } else {
             userTime = System.currentTimeMillis();
             log.warn("UTC time offset is null. User will be assumed to be in same timezone as server.");
+        }
+
+        if (dstTimeOffset != null) {
+            userTime += dstTimeOffset.getMillis();
+        } else {
+            if (log.isDebugEnabled()) {
+                log.warn("Daylight Saving Time offset is not defined. Used default offset of 0");
+            }
         }
 
         try {
@@ -501,18 +509,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             Date start = new SimpleDateFormat("HHmm").parse(config.getStartTime());
             Date end = new SimpleDateFormat("HHmm").parse(config.getEndTime());
 
-            if (end.before(start)) {
-                //ranges are scattered across 2 days, add one day to end date and compare
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(end);
-                calendar.add(Calendar.DATE, 1);
-
-                Date correctedEnd = calendar.getTime();
-
-                return start.before(currentUserTime) && correctedEnd.after(currentUserTime);
-            }
-            //ranges are within same day
-            return start.before(currentUserTime) && end.after(currentUserTime);
+            return TimeZoneUtils.isTimeBetween(start, end, currentUserTime);
         } catch (ParseException e) {
             log.error("Error occurred while checking authorized login times.", e);
             return true;
@@ -540,12 +537,20 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         boolean expired = false;
         long currentTime = System.currentTimeMillis();
         long lastPasswordChangeTime = -1l;
+        String initialPasswordChangedClaimValue = null;
 
         try {
             int tenantId = MBSSAuthenticatorServiceComponent.getRealmService().getTenantManager().
                     getTenantId(MultitenantUtils.getTenantDomain(username));
             UserStoreManager userStoreManager = (UserStoreManager) MBSSAuthenticatorServiceComponent
                     .getRealmService().getTenantUserRealm(tenantId).getUserStoreManager();
+
+            initialPasswordChangedClaimValue = userStoreManager.getUserClaimValue(username,
+                    MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM, null);
+            if (initialPasswordChangedClaimValue == null) {
+                userStoreManager.setUserClaimValue(username, MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM,
+                        "true", null);
+            }
 
             String lastPasswordChangeClaimValue = userStoreManager.getUserClaimValue(username,
                     MBSSAuthenticatorConstants.LAST_PASSWORD_CHANGE_CLAIM, null);
@@ -561,17 +566,18 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             context.setProperty(MBSSAuthenticatorConstants.FAILED_REASON_CAUSE, e.getMessage());
         }
 
-        if (lastPasswordChangeTime != -1) {
+        if (initialPasswordChangedClaimValue == null) {
+            if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
+                    .isChangePasswordAtFirstLogin()){
+                expired = true;
+            }
+        } else if (lastPasswordChangeTime != -1) {
             long unchangedDurationInMillis = currentTime - lastPasswordChangeTime;
             long expireIntervalInMillis = expireInterval * 24 * 60 * 60 * 1000;
 
             if (unchangedDurationInMillis > expireIntervalInMillis) {
                 expired = true;
             }
-        } else if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
-                .isChangePasswordAtFirstLogin()){
-
-            expired = true;
         }
 
         if (expired) {
