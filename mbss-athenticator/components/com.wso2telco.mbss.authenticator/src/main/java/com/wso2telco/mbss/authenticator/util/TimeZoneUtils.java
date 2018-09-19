@@ -2,11 +2,8 @@ package com.wso2telco.mbss.authenticator.util;
 
 import com.wso2telco.mbss.authenticator.model.TimeOffset;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class TimeZoneUtils {
 
