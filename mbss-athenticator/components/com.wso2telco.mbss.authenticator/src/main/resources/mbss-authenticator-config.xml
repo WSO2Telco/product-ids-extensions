@@ -24,7 +24,7 @@
     <!--Error message contents-->
     <errorMessages>
         <accountSuspendedMessage>User account is suspended for inactivity. Please contact administrator.</accountSuspendedMessage>
-        <sessionLimitExceededMessage>Login failed because there are other active sessions. End other sessions before trying agaiin.</sessionLimitExceededMessage>
+        <sessionLimitExceededMessage>Login failed because there are other active sessions. End other sessions before trying again.</sessionLimitExceededMessage>
         <invalidCredentialsMessage>Unauthorized use of Celcoms applications is prohibited.</invalidCredentialsMessage>
         <accountLockedMessage>User account is locked. Please contact administrator.</accountLockedMessage>
         <loginTimeRestrictedMessage>Login failed due to login time restrictions. Contact administrator for more details.</loginTimeRestrictedMessage>
