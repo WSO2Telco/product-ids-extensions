@@ -28,14 +28,11 @@ public class TimeZoneUtils {
         if (hoursAndMinutes.length == 2 && isNumeric(hoursAndMinutes[1])) {
             char sign = offset.charAt(0);
             switch (sign) {
-                case '+':
-                    minutes = Integer.parseInt(hoursAndMinutes[1]);
-                    break;
-
                 case '-':
                     minutes = Integer.parseInt(hoursAndMinutes[1]) * -1;
                     break;
 
+                case '+':
                 default:
                     minutes = Integer.parseInt(hoursAndMinutes[1]);
                     break;
