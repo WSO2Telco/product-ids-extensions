@@ -4,8 +4,8 @@
         <!--The following wotkingTime definitions are samples. Feel free to change according to your requirements.-->
         <workingTime>
             <role>engineerRole</role> <!--Create this role first from management console UI-->
-            <start>0800</start> <!--Start of work time in 24H format-->
-            <end>1600</end> <!--End of work time in 24H format-->
+            <start>0300</start> <!--Start of work time in 24H format-->
+            <end>0430</end> <!--End of work time in 24H format-->
         </workingTime>
         
         <workingTime>
