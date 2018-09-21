@@ -1,3 +1,9 @@
+================================================================
+Patch ID     :  patch_mig00093
+Public Jira  :  https://jira.wso2telco.com/jira/browse/INTGW-233
+Description  :  MBSS Basic Authenticator for MIG 2.2.0
+================================================================
+
 DESCRIPTION
 ------------
 MBSS basic authenticator has following functionalities,
@@ -65,14 +71,14 @@ Configuration
     i)  Dialect:                http://wso2.org/claims
         Display Name:	        UTC Offset
         Description:	        UTC Offset
-        Claim Uri:	            http://wso2.org/claims/identity/utcOffset
+        Claim Uri:	            http://wso2.org/claims/utcOffset
         Mapped Attribute (s):	utcOffset
         Supported by Default:	true
 
    ii)  Dialect:                http://wso2.org/claims
         Display Name:	        Day light saving time offset
         Description:        	Day light saving time offset
-        Claim Uri:          	http://wso2.org/claims/identity/dstOffset
+        Claim Uri:          	http://wso2.org/claims/dstOffset
         Mapped Attribute (s):	dstOffset
         Supported by Default:	true
      
