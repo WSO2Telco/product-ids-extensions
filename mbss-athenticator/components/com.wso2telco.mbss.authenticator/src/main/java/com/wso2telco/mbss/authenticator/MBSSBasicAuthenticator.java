@@ -368,13 +368,15 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
 
         final int maximumSessionCount = ConfigLoader.getInstance().getMbssAuthenticatorConfig().getFeatureConfig()
                 .getMaximumSessionLimit();
+        final long sessionTimeout  = ConfigLoader.getInstance().getMbssAuthenticatorConfig().getFeatureConfig()
+                .getSessionTimeout();
 
         String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         String serviceProviderName = context.getServiceProviderName();
         boolean allowed = false;
         try {
             int cachedActiveSessions = MBSSAuthenticatorDbUtil.getActiveSessionCount(username + ":"
-                    + serviceProviderName);
+                    + serviceProviderName, sessionTimeout);
             if (cachedActiveSessions < maximumSessionCount) {
                 allowed = true;
             } else {

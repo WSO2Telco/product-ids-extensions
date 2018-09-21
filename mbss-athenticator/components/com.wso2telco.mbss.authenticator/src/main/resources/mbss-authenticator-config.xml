@@ -4,8 +4,8 @@
         <!--The following wotkingTime definitions are samples. Feel free to change according to your requirements.-->
         <workingTime>
             <role>engineerRole</role> <!--Create this role first from management console UI-->
-            <start>0800</start> <!--Start of work time in 24H format-->
-            <end>1600</end> <!--End of work time in 24H format-->
+            <start>0300</start> <!--Start of work time in 24H format-->
+            <end>0430</end> <!--End of work time in 24H format-->
         </workingTime>
         
         <workingTime>
@@ -24,7 +24,7 @@
     <!--Error message contents-->
     <errorMessages>
         <accountSuspendedMessage>User account is suspended for inactivity. Please contact administrator.</accountSuspendedMessage>
-        <sessionLimitExceededMessage>Login failed because there are other active sessions. End other sessions before trying agaiin.</sessionLimitExceededMessage>
+        <sessionLimitExceededMessage>Login failed because there are other active sessions. End other sessions before trying again.</sessionLimitExceededMessage>
         <invalidCredentialsMessage>Unauthorized use of Celcoms applications is prohibited.</invalidCredentialsMessage>
         <accountLockedMessage>User account is locked. Please contact administrator.</accountLockedMessage>
         <loginTimeRestrictedMessage>Login failed due to login time restrictions. Contact administrator for more details.</loginTimeRestrictedMessage>
@@ -41,9 +41,10 @@
     <featureConfig>
         <accountSuspensionFeature>true</accountSuspensionFeature>        
         <loginTimeRestrictionFeature>true</loginTimeRestrictionFeature>
-        <periodicPasswordChangeFeature>false</periodicPasswordChangeFeature>
+        <periodicPasswordChangeFeature>true</periodicPasswordChangeFeature>
         <sessionLimitingFeature>true</sessionLimitingFeature>
         <maximumSessionLimit>1</maximumSessionLimit>
+        <sessionTimeout>1800</sessionTimeout> <!--In seconds-->
     </featureConfig>
     
     <periodicPasswordChangeConfig>

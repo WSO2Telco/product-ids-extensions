@@ -26,7 +26,17 @@ public class TimeZoneUtils {
 
         int minutes = 0;
         if (hoursAndMinutes.length == 2 && isNumeric(hoursAndMinutes[1])) {
-            minutes = hours < 0 ? Integer.parseInt(hoursAndMinutes[1]) * -1 : Integer.parseInt(hoursAndMinutes[1]);
+            char sign = offset.charAt(0);
+            switch (sign) {
+                case '-':
+                    minutes = Integer.parseInt(hoursAndMinutes[1]) * -1;
+                    break;
+
+                case '+':
+                default:
+                    minutes = Integer.parseInt(hoursAndMinutes[1]);
+                    break;
+            }
         }
 
         timeOffset.setHours(hours);
