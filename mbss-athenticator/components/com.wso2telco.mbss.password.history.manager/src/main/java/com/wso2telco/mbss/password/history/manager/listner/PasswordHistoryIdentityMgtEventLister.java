@@ -43,9 +43,7 @@ public class PasswordHistoryIdentityMgtEventLister extends AbstractIdentityUserO
 
         storePasswordHistory(userName, credential, userStoreManager);
         //Set Last updated Password property
-        Map<String, String> userClaims = new HashMap<>();
-        userClaims.put(IdentityMgtConstants.LAST_PASSWORD_UPDATE_TIME, Long.toString(System.currentTimeMillis()));
-        userStoreManager.setUserClaimValues(userName, userClaims, null);
+        updateLastPasswordChangeClaim(userStoreManager, userName);
         return true;
     }
 
@@ -56,6 +54,7 @@ public class PasswordHistoryIdentityMgtEventLister extends AbstractIdentityUserO
 
     public boolean doPostUpdateCredential(String userName, Object credential, UserStoreManager userStoreManager) throws UserStoreException {
         storePasswordHistory(userName, credential, userStoreManager);
+        updateLastPasswordChangeClaim(userStoreManager, userName);
         return true;
     }
 
@@ -152,6 +151,12 @@ public class PasswordHistoryIdentityMgtEventLister extends AbstractIdentityUserO
         } catch (IdentityPasswordHistoryException e) {
             throw new UserStoreException("Error while storing password History", e);
         }
+    }
+
+    private void updateLastPasswordChangeClaim(UserStoreManager userStoreManager, String userName) throws UserStoreException {
+        Map<String, String> userClaims = new HashMap<>();
+        userClaims.put(IdentityMgtConstants.LAST_PASSWORD_UPDATE_TIME, Long.toString(System.currentTimeMillis()));
+        userStoreManager.setUserClaimValues(userName, userClaims, null);
     }
 
 

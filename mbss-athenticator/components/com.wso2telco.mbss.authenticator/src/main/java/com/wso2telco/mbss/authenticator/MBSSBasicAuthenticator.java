@@ -231,7 +231,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
 
     @Override
     public String getFriendlyName() {
-        //Set the name to be displayed in local authenticator drop down lsit
+        //Set the name to be displayed in local authenticator drop down list
         return MBSSAuthenticatorConstants.AUTHENTICATOR_FRIENDLY_NAME;
     }
 
@@ -317,8 +317,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         }
 
         String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
-        context.setSubject(AuthenticatedUser.createLocalAuthenticatedUserFromSubjectIdentifier(username));
-
         boolean isSuspended = false;
         try {
             int tenantId = MBSSAuthenticatorServiceComponent.getRealmService().getTenantManager().
@@ -366,13 +364,29 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             return true;
         }
 
+        String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
+        String serviceProviderName = context.getServiceProviderName();
+
+        //skip privileged users
+        try {
+            int tenantId = MBSSAuthenticatorServiceComponent.getRealmService().getTenantManager().
+                    getTenantId(MultitenantUtils.getTenantDomain(username));
+            UserStoreManager userStoreManager = (UserStoreManager) MBSSAuthenticatorServiceComponent
+                    .getRealmService().getTenantUserRealm(tenantId).getUserStoreManager();
+
+            if (isPrivilegedUser(userStoreManager, username)) {
+                return true;
+            }
+        } catch (UserStoreException e) {
+           //ignore
+        }
+
         final int maximumSessionCount = ConfigLoader.getInstance().getMbssAuthenticatorConfig().getFeatureConfig()
                 .getMaximumSessionLimit();
         final long sessionTimeout  = ConfigLoader.getInstance().getMbssAuthenticatorConfig().getFeatureConfig()
                 .getSessionTimeout();
 
-        String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
-        String serviceProviderName = context.getServiceProviderName();
+
         boolean allowed = false;
         try {
             int cachedActiveSessions = MBSSAuthenticatorDbUtil.getActiveSessionCount(username + ":"
@@ -457,8 +471,6 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             String dstOffsetClaim = userStoreManager.getUserClaimValue(username,
                                 MBSSAuthenticatorConstants.DST_OFFSET_CLAIM, null);
 
-
-
             if (abstractUserStoreManager != null) {
                 if (abstractUserStoreManager.isUserInRole(username, config.getRole())) {
                     boolean authorized = isLoginAllowedByTimeConfig(config, utcOffsetClaim, dstOffsetClaim);
@@ -537,6 +549,7 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
                 .getPasswordChangeInterval();
         String username = request.getParameter(MBSSAuthenticatorConstants.USER_NAME);
         boolean expired = false;
+        boolean isPrivilegedUser = false;
         long currentTime = System.currentTimeMillis();
         long lastPasswordChangeTime = -1l;
         String initialPasswordChangedClaimValue = null;
@@ -547,18 +560,18 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             UserStoreManager userStoreManager = (UserStoreManager) MBSSAuthenticatorServiceComponent
                     .getRealmService().getTenantUserRealm(tenantId).getUserStoreManager();
 
-            initialPasswordChangedClaimValue = userStoreManager.getUserClaimValue(username,
-                    MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM, null);
-            if (initialPasswordChangedClaimValue == null) {
-                userStoreManager.setUserClaimValue(username, MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM,
-                        "true", null);
-            }
+            //skip privileged users (admin & publisher roles)
+            isPrivilegedUser = isPrivilegedUser(userStoreManager, username);
+            if (!isPrivilegedUser) {
+                initialPasswordChangedClaimValue = userStoreManager.getUserClaimValue(username,
+                        MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM, null);
 
-            String lastPasswordChangeClaimValue = userStoreManager.getUserClaimValue(username,
-                    MBSSAuthenticatorConstants.LAST_PASSWORD_CHANGE_CLAIM, null);
+                String lastPasswordChangeClaimValue = userStoreManager.getUserClaimValue(username,
+                        MBSSAuthenticatorConstants.LAST_PASSWORD_CHANGE_CLAIM, null);
 
-            if (null != lastPasswordChangeClaimValue && (!lastPasswordChangeClaimValue.isEmpty())) {
-                lastPasswordChangeTime = Long.parseLong(lastPasswordChangeClaimValue);
+                if (null != lastPasswordChangeClaimValue && (!lastPasswordChangeClaimValue.isEmpty())) {
+                    lastPasswordChangeTime = Long.parseLong(lastPasswordChangeClaimValue);
+                }
             }
         } catch (UserStoreException e) {
             log.warn(e.getMessage(), e);
@@ -568,19 +581,23 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
             context.setProperty(MBSSAuthenticatorConstants.FAILED_REASON_CAUSE, e.getMessage());
         }
 
-        if (initialPasswordChangedClaimValue == null) {
-            if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
-                    .isChangePasswordAtFirstLogin()){
-                expired = true;
-            }
-        } else if (lastPasswordChangeTime != -1) {
-            long unchangedDurationInMillis = currentTime - lastPasswordChangeTime;
-            long expireIntervalInMillis = expireInterval * 24 * 60 * 60 * 1000;
+        if (!isPrivilegedUser) {
+            if (initialPasswordChangedClaimValue == null ||
+                    Boolean.FALSE.toString().equals(initialPasswordChangedClaimValue)) {
+                if (ConfigLoader.getInstance().getMbssAuthenticatorConfig().getPasswordChangeConfig()
+                        .isChangePasswordAtFirstLogin()) {
+                    expired = true;
+                }
+            } else if (lastPasswordChangeTime != -1) {
+                long unchangedDurationInMillis = currentTime - lastPasswordChangeTime;
+                long expireIntervalInMillis = expireInterval * 24 * 60 * 60 * 1000;
 
-            if (unchangedDurationInMillis > expireIntervalInMillis) {
-                expired = true;
+                if (unchangedDurationInMillis > expireIntervalInMillis) {
+                    expired = true;
+                }
             }
         }
+
 
         if (expired) {
             log.warn("Password of user [" + username + "] has been expired. " +
@@ -632,6 +649,8 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
                         if (authorized) {
                             userStoreManager.updateCredential(MultitenantUtils.getTenantAwareUsername(username),
                                     newPassword, currentPassword);
+                            userStoreManager.setUserClaimValue(username, MBSSAuthenticatorConstants.INITIAL_PASSWORD_CHANGED_CLAIM,
+                                        "true", null);
                             log.info("Password changed for user: " + username);
                             context.setProperty(MBSSAuthenticatorConstants.FAILED_REASON,
                                     MBSSAuthenticatorConstants.REASON_PASSWORD_CHANGE_SUCCESS);
@@ -656,5 +675,19 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         }
 
         return handled;
+    }
+
+    private boolean isPrivilegedUser(UserStoreManager userStoreManager, String username) {
+        boolean isPrileged = false;
+        try {
+            AbstractUserStoreManager abstractUserStoreManager = ((AbstractUserStoreManager) userStoreManager);
+            if (abstractUserStoreManager.isUserInRole(username, MBSSAuthenticatorConstants.ADMIN_ROLE_NAME) ||
+                    abstractUserStoreManager.isUserInRole(username, MBSSAuthenticatorConstants.PUBLISHER_ROLE_NAME)) {
+                isPrileged = true;
+            }
+        } catch (UserStoreException e) {
+            log.error("Privileged user identification failed.", e);
+        }
+        return isPrileged;
     }
 }

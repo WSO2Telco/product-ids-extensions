@@ -14,7 +14,8 @@ public abstract class MBSSAuthenticatorConstants {
     public static final String CURRENT_PASSWORD = "CURRENT_PWD";
     public static final String NEW_PASSWORD = "NEW_PWD";
     public static final String NEW_PASSWORD_CONFIRM = "NEW_PWD_CONFIRMATION";
-
+    public static final String ADMIN_ROLE_NAME = "admin";
+    public static final String PUBLISHER_ROLE_NAME = "publisher";
 
     public static final String ACCOUNT_SUSPENDED_CLAIM = "http://wso2.org/claims/identity/accountSuspended";
     public static final String LAST_PASSWORD_CHANGE_CLAIM = "http://wso2.org/claims/identity/lastPasswordUpdateTime";

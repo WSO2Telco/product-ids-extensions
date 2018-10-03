@@ -79,11 +79,15 @@ public class MBSSAuthenticatorDbUtil {
     }
 
 
-    public static void removeOutdatedSessionData() {
-        String sql = "DELETE FROM IDN_AUTH_SESSION_INFO";
+    public static void removeOutdatedSessionData(long sessionTimeout) {
+        String sql = "DELETE FROM IDN_AUTH_SESSION_INFO WHERE " +
+                "(START_TIME + ?) < ?";
+        long currentTime = System.currentTimeMillis();
         try {
             Connection con = getIdentityDbConnection();
             PreparedStatement prep = con.prepareStatement(sql);
+            prep.setLong(1, sessionTimeout * 1000L);
+            prep.setLong(2, currentTime);
             prep.executeUpdate();
 
             closeResources(con, prep, null);
