@@ -681,9 +681,14 @@ public class MBSSBasicAuthenticator extends AbstractApplicationAuthenticator imp
         boolean isPrileged = false;
         try {
             AbstractUserStoreManager abstractUserStoreManager = ((AbstractUserStoreManager) userStoreManager);
-            if (abstractUserStoreManager.isUserInRole(username, MBSSAuthenticatorConstants.ADMIN_ROLE_NAME) ||
-                    abstractUserStoreManager.isUserInRole(username, MBSSAuthenticatorConstants.PUBLISHER_ROLE_NAME)) {
-                isPrileged = true;
+            String roles[] = abstractUserStoreManager.getRoleListOfUser(username);
+
+            for (String role: roles) {
+                if (role.matches(MBSSAuthenticatorConstants.ADMIN_ROLE_NAME) ||
+                        role.matches(MBSSAuthenticatorConstants.PUBLISHER_ROLE_NAME)) {
+                    isPrileged = true;
+                    break;
+                }
             }
         } catch (UserStoreException e) {
             log.error("Privileged user identification failed.", e);
