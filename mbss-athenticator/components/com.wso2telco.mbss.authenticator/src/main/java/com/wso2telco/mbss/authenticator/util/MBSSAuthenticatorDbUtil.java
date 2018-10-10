@@ -62,19 +62,28 @@ public class MBSSAuthenticatorDbUtil {
         String sql = "SELECT COUNT(SESSION_ID) FROM IDN_AUTH_SESSION_INFO WHERE USERNAME = ? AND " +
                 "SERVICE_PROVIDER = ? AND " +
                 "(START_TIME + ?) > ?";
-        Connection con = getIdentityDbConnection();
-        PreparedStatement prep = con.prepareStatement(sql);
-        prep.setString(1, username);
-        prep.setString(2, serviceProviderName);
-        prep.setLong(3, sessionTimeout * 1000); //converting session timeout to milliseconds
-        prep.setLong(4, currentTime);
-        ResultSet res = prep.executeQuery();
-
+        Connection con = null;
+        PreparedStatement prep = null;
+        ResultSet res = null;
         int activeSessionCount = -1;
-        if (res.next()) {
-            activeSessionCount = res.getInt(1);
+        try {
+            con = getIdentityDbConnection();
+            prep = con.prepareStatement(sql);
+            prep.setString(1, username);
+            prep.setString(2, serviceProviderName);
+            prep.setLong(3, sessionTimeout * 1000); //converting session timeout to milliseconds
+            prep.setLong(4, currentTime);
+            res = prep.executeQuery();
+
+            if (res.next()) {
+                activeSessionCount = res.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            closeResources(con, prep, res);
         }
-        closeResources(con, prep, res);
+
         return activeSessionCount;
     }
 
@@ -83,16 +92,22 @@ public class MBSSAuthenticatorDbUtil {
         String sql = "DELETE FROM IDN_AUTH_SESSION_INFO WHERE " +
                 "(START_TIME + ?) < ?";
         long currentTime = System.currentTimeMillis();
+        Connection con = null;
+        PreparedStatement prep = null;
         try {
-            Connection con = getIdentityDbConnection();
-            PreparedStatement prep = con.prepareStatement(sql);
+            con = getIdentityDbConnection();
+            prep = con.prepareStatement(sql);
             prep.setLong(1, sessionTimeout * 1000L);
             prep.setLong(2, currentTime);
             prep.executeUpdate();
-
-            closeResources(con, prep, null);
         } catch (SQLException e) {
             log.error("Error removing old session data", e);
+        } finally {
+            try {
+                closeResources(con, prep, null);
+            } catch (SQLException e) {
+               log.error("Error closing database resources", e);
+            }
         }
     }
 }

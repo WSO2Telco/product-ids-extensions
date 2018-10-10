@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DataPublisherDbUtil {
@@ -48,32 +49,61 @@ public class DataPublisherDbUtil {
                 "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE " +
                 "START_TIME = ?, RENEW_TIME = ?, TERMINATION_TIME = ?";
 
-        Connection connection = getIdentityDbConnection();
-        PreparedStatement prep = connection.prepareStatement(sql);
-        prep.setString(1, sessionData.getSessionId());
-        prep.setString(2, sessionData.getUser());
-        prep.setString(3, sessionData.getServiceProvider());
-        prep.setLong(4, sessionData.getCreatedTimestamp());
-        prep.setLong(5, sessionData.getUpdatedTimestamp());
-        prep.setLong(6, sessionData.getTerminationTimestamp());
-        prep.setLong(7, sessionData.getCreatedTimestamp());
-        prep.setLong(8, sessionData.getUpdatedTimestamp());
-        prep.setLong(9, sessionData.getTerminationTimestamp());
+        Connection connection = null;
+        PreparedStatement prep = null;
+        try {
+            connection = getIdentityDbConnection();
+            prep = connection.prepareStatement(sql);
+            prep.setString(1, sessionData.getSessionId());
+            prep.setString(2, sessionData.getUser());
+            prep.setString(3, sessionData.getServiceProvider());
+            prep.setLong(4, sessionData.getCreatedTimestamp());
+            prep.setLong(5, sessionData.getUpdatedTimestamp());
+            prep.setLong(6, sessionData.getTerminationTimestamp());
+            prep.setLong(7, sessionData.getCreatedTimestamp());
+            prep.setLong(8, sessionData.getUpdatedTimestamp());
+            prep.setLong(9, sessionData.getTerminationTimestamp());
 
-        int rowsUpdated = prep.executeUpdate();
-        if (rowsUpdated == 0) {
-            log.warn("Publish session data: Database update performed 0 row updates");
+            int rowsUpdated = prep.executeUpdate();
+            if (rowsUpdated == 0) {
+                log.warn("Publish session data: Database update performed 0 row updates");
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            closeResources(connection, prep, null);
         }
-        connection.commit();
-        prep.close();
+
     }
 
     public static void terminateSession(String sessionId) throws SQLException {
         String sql = "DELETE FROM IDN_AUTH_SESSION_INFO WHERE SESSION_ID = ?";
-        Connection con = getIdentityDbConnection();
-        PreparedStatement prep = con.prepareStatement(sql);
-        prep.setString(1, sessionId);
-        prep.executeUpdate();
-        prep.close();
+        Connection con = null;
+        PreparedStatement prep = null;
+        try {
+            con = getIdentityDbConnection();
+            prep = con.prepareStatement(sql);
+            prep.setString(1, sessionId);
+            prep.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            closeResources(con, prep, null);
+        }
+    }
+
+    private static void closeResources (Connection con, PreparedStatement prep, ResultSet rs) throws SQLException {
+        if ((null != con) && (!con.isClosed())) {
+            con.close();
+        }
+
+        if ((null != prep) && (!prep.isClosed())) {
+            prep.close();
+        }
+
+        if ((null != rs) && (!rs.isClosed())) {
+            rs.close();
+        }
     }
 }
