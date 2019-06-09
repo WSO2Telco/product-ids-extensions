@@ -6,7 +6,7 @@ Description  :  MBSS Basic Authenticator for MIG 2.2.0
 
 DESCRIPTION
 ------------
-MBSS basic authenticator has following functionalities,
+MBSS basic authenticator has following functionality,
     * Session limiting feature
     * Configurable Login time restrictions (Work time authenticator)
     * Periodic password change feature
