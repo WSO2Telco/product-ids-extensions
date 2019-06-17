@@ -19,7 +19,7 @@
     <parent>
         <groupId>com.wso2telco.mbss</groupId>
         <artifactId>mbss-extensions</artifactId>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -30,6 +30,9 @@
     <modules>
         <module>com.wso2telco.password.validator.feature</module>
     </modules>
+    <properties>
+        <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
+    </properties>
 </project>
 
 
