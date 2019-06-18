@@ -210,7 +210,7 @@
     <modules>
         <module>components/com.wso2telco.mbss.authenticator</module>
         <module>components/org.wso2.carbon.identity.data.publisher.session</module>
-        <module>components/com.wso2telco.password.validator</module>
+        <module>components/password-validator</module>
         <module>components/com.wso2telco.dep.tokenregenerator</module>
         <module>features</module>
     </modules>
