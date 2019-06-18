@@ -24,11 +24,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>password-validator-feature</artifactId>
-    <packaging>pom</packaging>
-    <name>WSO2.Telco Password Validator Feature</name>
-    <description>This feature contains Validation for Passwords.</description>
 
+
+    <artifactId>data-publisher-session-feature</artifactId>
+    <packaging>pom</packaging>
+    <name>WSO2 Carbon - Authentication Data Publisher Feature</name>
+    <description>Carbon - Authentication Data Publisher Feature</description>
     <build>
         <plugins>
             <plugin>
@@ -43,7 +44,7 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>password-validator</id>
+                            <id>identity.data.publisher</id>
                             <propertiesFile>../feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
@@ -52,7 +53,7 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>com.wso2telco.mbss:password-validator:1.0.0</bundleDef>
+                                <bundleDef>com.wso2telco.mbss:org.wso2.carbon.identity.data.publisher.session:1.0.0</bundleDef>
                             </bundles>
                         </configuration>
                     </execution>
