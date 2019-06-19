@@ -52,7 +52,7 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>com.wso2telco.mbss:password-validator:1.0.0</bundleDef>
+                                <bundleDef>com.wso2telco.mbss:com.wso2telco.password.validator:1.0.0</bundleDef>
                             </bundles>
                         </configuration>
                     </execution>
