@@ -12,7 +12,9 @@ Copy following artifacts from resources/ directory into <IS_HOME>/repository/com
    
    c. `com.wso2telco.password.validator-1.0.0.jar`
    
-Copy resources/mbss-authenticator-config.xml file into `<IS_HOME>/repository/conf` directory.
+Copy com.wso2telco.mbss.authenticator/resources/`mbss-authenticator-config.xml` file into `<IS_HOME>/repository/conf` directory.
+
+Copy com.wso2telco.mbss.authenticator/resources/`pwd-reset.jsp` into `<IS_HOME>/repository/deployment/server/webapps/authenticationendpoint/` directory.
 
 Set following configurations to false on `<IS_HOME>/repository/conf/mbss-authenticator-config.xml`
 
@@ -44,21 +46,35 @@ Open `identity.xml` file located at `<IS_HOME>/repository/conf/identity` directo
 
 Create following claims on IS
 ````
-Dialect: http://wso2.org/claims 
-Display Name: UTC Offset 
-Description: UTC Offset 
-Claim Uri: http://wso2.org/claims/utcOffset 
+Dialect:        http://wso2.org/claims 
+Display Name:   UTC Offset 
+Description:    UTC Offset 
+Claim Uri:      http://wso2.org/claims/utcOffset 
 Mapped Attribute (s): utcOffset 
 Supported by Default: true
 ````
 ````
-Dialect: http://wso2.org/claims 
-Display Name: Day light saving time offset 
-Description: Day light saving time offset 
-Claim Uri: http://wso2.org/claims/dstOffset 
+Dialect:        http://wso2.org/claims 
+Display Name:   Day light saving time offset 
+Description:    Day light saving time offset 
+Claim Uri:      http://wso2.org/claims/dstOffset 
 Mapped Attribute (s): dstOffset 
 Supported by Default: true
 ````
+````
+Dialect:                http://wso2.org/claims
+Display Name:	        Intitial Password Changed
+Description:        	Intitial Password Changed
+Claim Uri:          	http://wso2.org/claims/identity/initialPasswordChanged
+Mapped Attribute (s):	initialPasswordChanged
+Supported by Default:	false
+````
+        
+    
+Create the roles defined in `mbss-authenticator-config.xml` (inside workingTime sections) on IS using management console or remove unecessary definitions from configuration file.
+
+Assign newly created roles to users as needed.
+
 Start IS
 
 Log in to `https://localhost:9444/carbon/admin/login.jsp` using `admin`

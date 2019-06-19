@@ -1,16 +1,5 @@
-================================================================
-Patch ID     :  patch_mig00093
-Public Jira  :  https://jira.wso2telco.com/jira/browse/INTGW-233
-Description  :  MBSS Basic Authenticator for MIG 2.2.0
-================================================================
-
 DESCRIPTION
 ------------
-MBSS basic authenticator has following functionality,
-    * Session limiting feature
-    * Configurable Login time restrictions (Work time authenticator)
-    * Periodic password change feature
-    * Detects suspended/locked accounts and prevents those accounts from authorizing.
 
 Please perform below modifications to the current deployment to reflect the changes.
 
@@ -22,15 +11,6 @@ System Requirements
 a) Java SE Development Kit 1.8
 b) wso2telcoids-2.2.0
 
-
-DEPENDANT PATCHES
--------------------------
-This patch depends on following patches
-    * patch_mig00087
-    * patch_mig00088
-    * patch_dep00096
-    
-
 INSTALLATION INSTRUCTIONS
 -------------------------
 1) Copy following artifacts from resources/ directory into <IS_HOME>/repository/components/dropins (replace existing ones if needed)
@@ -40,7 +20,6 @@ INSTALLATION INSTRUCTIONS
 
 2) Copy following configuration files (replace existing ones if needed),
     * resources/mbss-authenticator-config.xml into <IS_HOME>/repository/conf directory
-    * resources/password_history/password-history-identity-mgt.properties into <IS_HOME>/repository/conf/identity
 
 3) Copy resources/pwd-reset.jsp into <IS_HOME>/repository/deployment/server/webapps/authenticationendpoint/ directory.
 
@@ -48,7 +27,6 @@ INSTALLATION INSTRUCTIONS
 
 5) To create required database tables, execute following scripts on WSO2IDENTITY_DB
     * resources/db_setup.mysql.sql
-    * resources/password_history/mysql.sql
 
 
 Configuration
