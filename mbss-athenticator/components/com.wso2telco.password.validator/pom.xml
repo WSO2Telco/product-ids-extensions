@@ -29,7 +29,7 @@
     </parent>
 
     <groupId>com.wso2telco.mbss</groupId>
-    <artifactId>password-validator</artifactId>
+    <artifactId>com.wso2telco.password.validator</artifactId>
     <packaging>bundle</packaging>
     <name>Password Validator</name>
     <description>Password Validator</description>

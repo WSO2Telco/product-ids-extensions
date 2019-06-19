@@ -1,17 +1,14 @@
-## CONFIGURING MBSS AUTHENTICATOR ON INTGW 4.0.1
+# MBSS Authenticator- IGW 4.0.1
 
-### Install
+# Usage
 
-Stop IS
+Authenticator - Configure working times authenticator
+* Limit user logins to working hours
 
-Copy following artifacts from resources/ directory into <IS_HOME>/repository/components/dropin
-   
-   a. `com.wso2telco.mbss.authenticator-1.0.0.jar`
-   
-   b. `org.wso2.carbon.identity.data.publisher.session-1.0.0.jar`
-   
-   c. `com.wso2telco.password.validator-1.0.0.jar`
-   
+### Configure working times authenticator
+
+Copy the `com.wso2telco.mbss.authenticator-1.0.0.jar` file to `<HUB_HOME>/repository/componenet/dropins/`
+
 Copy resources/mbss-authenticator-config.xml file into `<IS_HOME>/repository/conf` directory.
 
 Set following configurations to false on `<IS_HOME>/repository/conf/mbss-authenticator-config.xml`
@@ -21,7 +18,7 @@ a. `accountSuspensionFeature`
 b. `periodicPasswordChangeFeature`
 
 c. `changePasswordAtFirstLogin`
-   
+
 Define the following datasource in IS
 ```
 <datasource>
@@ -69,6 +66,4 @@ Set `MBSSBasicAuthenticator` from `Service Provider Configuration`
 
 SSO should be enabled.
 
-
 ##### Apigate AXP 
-
