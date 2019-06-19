@@ -53,7 +53,7 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:com.wso2telco.dep.tokenregenerator:1.0.0</bundleDef>
+                                <bundleDef>org.wso2.carbon:com.wso2telco.dep.tokenregenerator:${artifact.version}</bundleDef>
                             </bundles>
                         </configuration>
                     </execution>
@@ -64,6 +64,7 @@
 
     <properties>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
+        <artifact.version>1.0.0</artifact.version>
     </properties>
 
 </project>
