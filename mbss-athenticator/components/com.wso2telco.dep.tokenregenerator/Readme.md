@@ -10,13 +10,19 @@ Edit the API synapse to add below handler at the top of handlers [on our auth to
 For token, userinfo API synapse add the below snippet additionaly before `<send>`tag of `<inSequence>`
 
 
-#### Using for Basic Auth GW
+### Using Basic Auth
 
 Copy the api-invocation-handler-1.0.0.jar file to `<HUB_HOME>/repository/componenet/dropins/`
 
-Edit the API synapse to add below handler at the top of handlers 
+##### Basic auth in a SELECTED API,
 
-### Example Syanpse file conating the API Invocation Handler
+i.e : It gets revert once republished.
+
+Edit the API synapse (`/repository/deployment/server/synapse-configs/default/api`) to add below handler at the top of handlers 
+
+`<handler class="com.wso2telco.dep.apihandler.ApiInvocationHandler"/>` as follows
+
+###### Syanpse file containing API Invocation Handler
 
 ```
    <handlers>
@@ -43,6 +49,23 @@ Edit the API synapse to add below handler at the top of handlers
    </handlers>
 ```
 
+##### Basic auth in a ALL API,
+
+Edit `repository/resources/api_templates/velocity_template.xml` with following handler.
+
+`<handler class="com.wso2telco.dep.apihandler.ApiInvocationHandler"/>`
+
+Below the line `<handlers xmlns="http://ws.apache.org/ns/synapse">` as following
+
+###### velocity_template file containing API Invocation Handler
+
+````
+#if($handlers.size() > 0)
+<handlers xmlns="http://ws.apache.org/ns/synapse">
+<handler class="com.wso2telco.dep.apihandler.ApiInvocationHandler"/>	
+#foreach($handler in $handlers)
+````
+
 ### Adding tokenregenerator-xxx.jar
 
 Copy com.wso2telco.dep.tokenregenerator-1.0.0.jar to `<IS_HOME>/repository/components/dropins/`
@@ -61,6 +84,7 @@ Add these line below the <property name="error_message_type" value="application/
 ```
 
 ### Notes
-* SP can only have one application been used at a time with Basic auth.
+* SP can only have one application with Basic auth.
+* If you changed the handler in synapse file instead of vm_template file, it will get reverted once API is republished.
 
 ##### Apigate AXP 

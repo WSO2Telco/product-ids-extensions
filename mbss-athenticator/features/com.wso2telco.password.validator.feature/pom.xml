@@ -51,7 +51,7 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>com.wso2telco.mbss:com.wso2telco.password.validator:${artifact.version}</bundleDef>
+                                <bundleDef>com.wso2telco.mbss:com.wso2telco.password.validator:${project.version}</bundleDef>
                             </bundles>
                         </configuration>
                     </execution>
@@ -62,7 +62,6 @@
 
     <properties>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
-        <artifact.version>1.0.0</artifact.version>
     </properties>
 
 </project>
