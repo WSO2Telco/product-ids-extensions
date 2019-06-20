@@ -59,6 +59,58 @@
                 <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
                 <version>${identity.framework.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${org.osgi.core.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>${org.osgi.compendium.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.user.core</artifactId>
+                <version>${org.wso2.carbon.user.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.mgt</artifactId>
+                <version>${org.wso2.carbon.identity.mgt}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.oauth2</groupId>
+                <artifactId>org.wso2.carbon.identity.oauth</artifactId>
+                <version>${org.wso2.carbon.identity.oauth}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.apimgt</groupId>
+                <artifactId>org.wso2.carbon.apimgt.impl</artifactId>
+                <version>${org.wso2.carbon.apimgt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.utils</artifactId>
+                <version>${org.wso2.carbon.utils}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.logging</artifactId>
+                <version>${org.wso2.carbon.logging}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.mgt</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <repositories>
@@ -232,6 +284,20 @@
 
     <properties>
         <carbon.kernel.version>4.4.7</carbon.kernel.version>
+        <org.wso2.carbon.apimgt.version>6.3.95</org.wso2.carbon.apimgt.version>
+        <org.osgi.core.version>4.2.0</org.osgi.core.version>
+        <org.osgi.compendium.version>4.2.0</org.osgi.compendium.version>
+        <carbon.identity.framework.version>5.5.0</carbon.identity.framework.version>
+        <org.wso2.carbon.user.core>4.4.3</org.wso2.carbon.user.core>
+        <org.wso2.carbon.identity.mgt>5.11.256</org.wso2.carbon.identity.mgt>
+        <org.wso2.carbon.identity.oauth>6.0.14</org.wso2.carbon.identity.oauth>
+        <maven-bundle-plugin>2.3.5</maven-bundle-plugin>
+        <maven-scr-plugin>1.7.2</maven-scr-plugin>
+        <maven-compiler-plugin>2.3.1</maven-compiler-plugin>
+        <commons-logging.version>1.2</commons-logging.version>
+        <org.wso2.carbon.identity.application.authentication.framework>5.2.2</org.wso2.carbon.identity.application.authentication.framework>
+        <org.wso2.carbon.utils>4.4.11</org.wso2.carbon.utils>
+        <org.wso2.carbon.logging>4.4.11</org.wso2.carbon.logging>
         <carbon.kernel.package.import.version.range>[4.4.0, 5.0.0)</carbon.kernel.package.import.version.range>
         <identity.framework.version>5.2.1</identity.framework.version>
         <carbon.identity.data.publisher.package.export.version>${project.version}</carbon.identity.data.publisher.package.export.version>
