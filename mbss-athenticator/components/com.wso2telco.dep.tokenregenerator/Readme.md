@@ -49,7 +49,7 @@ Edit the API synapse (`/repository/deployment/server/synapse-configs/default/api
    </handlers>
 ```
 
-##### Basic auth in a ALL API,
+##### Basic auth in ALL API's,
 
 Edit `repository/resources/api_templates/velocity_template.xml` with following handler.
 
