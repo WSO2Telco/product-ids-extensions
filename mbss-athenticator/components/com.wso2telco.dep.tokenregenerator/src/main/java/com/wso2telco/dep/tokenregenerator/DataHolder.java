@@ -18,15 +18,19 @@ package com.wso2telco.dep.tokenregenerator;
 import org.wso2.carbon.apimgt.impl.APIManagerConfigurationService;
 import org.wso2.carbon.user.core.service.RealmService;
 
+/**
+ * POJO for RealmService and APIManagerConfigurationService
+ *
+ */
 public class DataHolder {
 
-    private  RealmService realmService;
-    private static volatile DataHolder dataHolder;
     private APIManagerConfigurationService apiManagerConfigurationService;
 
-    private DataHolder() {
+    private static volatile DataHolder dataHolder;
 
-    }
+    private  RealmService realmService;
+
+    private DataHolder() {}
 
     public static DataHolder getInstance() {
 

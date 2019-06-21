@@ -30,9 +30,15 @@ import org.wso2.carbon.user.core.UserStoreException;
 import org.wso2.carbon.user.core.UserStoreManager;
 import org.wso2.carbon.user.core.common.AbstractUserOperationEventListener;
 
+/**
+ *
+ * Generate a new Access Token on Password Reset
+ * **This Event Listener executes before IdentityMgtEventListener **
+ *
+ */
 public class TokenRegenerationEventListener extends AbstractUserOperationEventListener {
 
-    private Logger log = Logger.getLogger(TokenRegenerationEventListener.class);
+    private static final Logger log = Logger.getLogger(TokenRegenerationEventListener.class);
     private static final String VALIDITY_PERIOD_KEY = "validity_period";
     private static final String VALIDITY_PERIOD_VALUE = "-2";
     private static final String TENANT_DOMAIN = "carbon.super";
@@ -143,6 +149,14 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         return true;
     }
 
+    /**
+     * Executing doPostUpdateCredential method for obtaining new access token
+     * @param userName
+     * @param credential
+     * @param userStoreManager
+     * @return boolean
+     * @throws UserStoreException
+     */
     @Override
     public boolean doPostUpdateCredentialByAdmin(String userName, Object credential, UserStoreManager userStoreManager) throws UserStoreException {
 
