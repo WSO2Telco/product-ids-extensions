@@ -1,7 +1,7 @@
 <mbssAuthenticatorConfig>
     <!--Working time configs, All times are in server's local time-->
     <workingTimes>
-        <!--The following wotkingTime definitions are samples. Feel free to change according to your requirements.-->
+        <!--The following workingTime definitions are samples. Feel free to change according to your requirements.-->
         <workingTime>
             <role>engineerRole</role> <!--Create this role first from management console UI-->
             <start>0300</start> <!--Start of work time in 24H format-->

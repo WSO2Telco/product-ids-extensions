@@ -7,7 +7,7 @@ Place the `mig_aouth_token.properties` file in /repository/conf/ location.
 
 Edit the API synapse to add below handler at the top of handlers [on our auth token userinfo apis]
 `<handler class="com.wso2telco.dep.apihandler.ApiInvocationHandler"/>`
-For token, userinfo API synapse add the below snippet additionaly before `<send>`tag of `<inSequence>`
+For token, userinfo API synapse add the below snippet additionally before `<send>`tag of `<inSequence>`
 
 
 ### Using Basic Auth

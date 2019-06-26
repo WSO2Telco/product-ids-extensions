@@ -1,5 +1,10 @@
 ## CONFIGURING MBSS AUTHENTICATOR ON INTGW 4.0.1
 
+This authenticator will add following functionality to the IS 5.6
+* Session Limiting Feature
+* Working Time configuration
+* Password validation custom policy
+
 ### Install
 
 Stop IS
@@ -83,7 +88,8 @@ Set `MBSSBasicAuthenticator` from `Service Provider Configuration`
 
 ## Notes
 
-SSO should be enabled.
+* SSO should be enabled.
+* To enable `Token regeneration` when using Basic auth refer `components/com.wso2telco.dep.tokenregenerator`
 
 
 ##### Apigate AXP 
