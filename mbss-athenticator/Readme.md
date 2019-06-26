@@ -1,9 +1,15 @@
 ## CONFIGURING MBSS AUTHENTICATOR ON INTGW 4.0.1
 
-This authenticator will add following functionality to the IS 5.6
+This authenticator will add following functionality to the WSO2 Identity Server 5.6.0. Please perform below modifications 
+to the current deployment to reflect the changes.
 * Session Limiting Feature
 * Working Time configuration
 * Password validation custom policy
+
+### System Requirements
+
+* Java SE Development Kit 1.8
+* WSO2 Identity Server 5.6.0
 
 ### Install
 
