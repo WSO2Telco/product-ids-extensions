@@ -67,28 +67,21 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
             log.debug("Username : "+ userName);
         }
 
-        OAuthAdminService oAuthAdminService = new OAuthAdminService();
-        String[] applicationScope;
-        String scope =  DataHolder.getInstance().getApiManagerConfigurationService().getAPIManagerConfiguration().getFirstProperty(APIConstants.
-                APPLICATION_TOKEN_SCOPE);
-
-        applicationScope = new String[] {scope};
-
         try {
-            OAuth2AccessTokenReqDTO tokenReqDTO = new OAuth2AccessTokenReqDTO();
-
             startTenantFlow(userName);
 
             if (log.isDebugEnabled()) {
                 log.debug("Fetching application details for "+userName);
             }
-            OAuthConsumerAppDTO[] oauthapps = oAuthAdminService.getAllOAuthApplicationData();
 
-            if (oauthapps != null) {
+            OAuthConsumerAppDTO[] oauthApps = new OAuthAdminService().getAllOAuthApplicationData();
+
+            if (oauthApps != null) {
+                OAuth2AccessTokenReqDTO tokenReqDTO = new OAuth2AccessTokenReqDTO();
                 tokenReqDTO.setGrantType(GRANT_TYPE);
 
-                if(oauthapps.length > 0) {
-                    issueAccessToken(userName, applicationScope, tokenReqDTO, oauthapps[0]);
+                if(oauthApps.length > 0) {
+                    issueAccessToken(userName, tokenReqDTO, oauthApps[0]);
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug("No Application Found for User: "+userName);
@@ -104,7 +97,12 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         return true;
     }
 
-    private void issueAccessToken(String userName, String[] applicationScope, OAuth2AccessTokenReqDTO tokenReqDTO, OAuthConsumerAppDTO oauthapp) {
+    private void issueAccessToken(String userName, OAuth2AccessTokenReqDTO tokenReqDTO, OAuthConsumerAppDTO oauthapp) {
+
+        final String scope =  DataHolder.getInstance().getApiManagerConfigurationService().getAPIManagerConfiguration().getFirstProperty(APIConstants.
+                APPLICATION_TOKEN_SCOPE);
+
+        final String[] applicationScope = new String[] {scope};
 
         RequestParameter[] requestParameters = new RequestParameter[1];
         RequestParameter requestParameter = new RequestParameter(VALIDITY_PERIOD_KEY,VALIDITY_PERIOD_VALUE);
@@ -151,7 +149,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
     private void endTenantFlow() {
         String threadLocalUsername = PrivilegedCarbonContext.getThreadLocalCarbonContext().getUsername();
         String threadTenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        final int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
 
         PrivilegedCarbonContext.endTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(threadLocalUsername);
