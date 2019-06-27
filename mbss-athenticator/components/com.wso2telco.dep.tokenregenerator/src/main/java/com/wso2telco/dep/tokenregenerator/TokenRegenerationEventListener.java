@@ -74,14 +74,8 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
 
         applicationScope = new String[] {scope};
 
-        String threadLocalUsername = PrivilegedCarbonContext.getThreadLocalCarbonContext().getUsername();
-        String threadTenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
         try {
             OAuth2AccessTokenReqDTO tokenReqDTO = new OAuth2AccessTokenReqDTO();
-            RequestParameter[] requestParameters = new RequestParameter[1];
-            RequestParameter requestParameter = new RequestParameter(VALIDITY_PERIOD_KEY,VALIDITY_PERIOD_VALUE);
 
             startTenantFlow(userName);
 
@@ -94,7 +88,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
                 tokenReqDTO.setGrantType(GRANT_TYPE);
 
                 if(oauthapps.length > 0) {
-                    issueAccessToken(userName, applicationScope, tokenReqDTO, requestParameters, requestParameter, oauthapps[0]);
+                    issueAccessToken(userName, applicationScope, tokenReqDTO, oauthapps[0]);
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug("No Application Found for User: "+userName);
@@ -104,13 +98,16 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         } catch (IdentityOAuthAdminException e) {
             log.error("Error while Fetching application details ", e);
         } finally {
-            endTenantFlow(threadLocalUsername, threadTenantDomain, tenantId);
+            endTenantFlow();
         }
 
         return true;
     }
 
-    private void issueAccessToken(String userName, String[] applicationScope, OAuth2AccessTokenReqDTO tokenReqDTO, RequestParameter[] requestParameters, RequestParameter requestParameter, OAuthConsumerAppDTO oauthapp) {
+    private void issueAccessToken(String userName, String[] applicationScope, OAuth2AccessTokenReqDTO tokenReqDTO, OAuthConsumerAppDTO oauthapp) {
+
+        RequestParameter[] requestParameters = new RequestParameter[1];
+        RequestParameter requestParameter = new RequestParameter(VALIDITY_PERIOD_KEY,VALIDITY_PERIOD_VALUE);
         tokenReqDTO.setClientId(oauthapp.getOauthConsumerKey());
         tokenReqDTO.setClientSecret(oauthapp.getOauthConsumerSecret());
         tokenReqDTO.setCallbackURI(oauthapp.getCallbackUrl());
@@ -135,10 +132,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
             log.debug("Starting to issue AccessToken for User "+userName);
         }
 
-        OAuthClientAuthnContext oAuthClientAuthnContext = new OAuthClientAuthnContext();
-        oAuthClientAuthnContext.setClientId(oauthapp.getOauthConsumerKey());
-        oAuthClientAuthnContext.setAuthenticated(true);
-        tokenReqDTO.setoAuthClientAuthnContext(oAuthClientAuthnContext);
+        tokenReqDTO.setoAuthClientAuthnContext(getOAuthClientAuthnContext(oauthapp));
 
         OAuth2AccessTokenRespDTO oAuth2AccessTokenRespDTO = service.issueAccessToken(tokenReqDTO);
 
@@ -147,7 +141,18 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
           }
     }
 
-    private void endTenantFlow(String threadLocalUsername, String threadTenantDomain, int tenantId) {
+    private OAuthClientAuthnContext getOAuthClientAuthnContext(OAuthConsumerAppDTO oauthapp) {
+        OAuthClientAuthnContext oAuthClientAuthnContext = new OAuthClientAuthnContext();
+        oAuthClientAuthnContext.setClientId(oauthapp.getOauthConsumerKey());
+        oAuthClientAuthnContext.setAuthenticated(true);
+        return oAuthClientAuthnContext;
+    }
+
+    private void endTenantFlow() {
+        String threadLocalUsername = PrivilegedCarbonContext.getThreadLocalCarbonContext().getUsername();
+        String threadTenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
         PrivilegedCarbonContext.endTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(threadLocalUsername);
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(threadTenantDomain);
