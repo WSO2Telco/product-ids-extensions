@@ -83,10 +83,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
             RequestParameter[] requestParameters = new RequestParameter[1];
             RequestParameter requestParameter = new RequestParameter(VALIDITY_PERIOD_KEY,VALIDITY_PERIOD_VALUE);
 
-            PrivilegedCarbonContext.startTenantFlow();
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(userName);
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(TENANT_DOMAIN);
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(-1234);
+            startTenantFlow(userName);
 
             if (log.isDebugEnabled()) {
                 log.debug("Fetching application details for "+userName);
@@ -97,40 +94,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
                 tokenReqDTO.setGrantType(GRANT_TYPE);
 
                 if(oauthapps.length > 0) {
-                    tokenReqDTO.setClientId(oauthapps[0].getOauthConsumerKey());
-                    tokenReqDTO.setClientSecret(oauthapps[0].getOauthConsumerSecret());
-                    tokenReqDTO.setCallbackURI(oauthapps[0].getCallbackUrl());
-                    tokenReqDTO.setScope(applicationScope);
-                    tokenReqDTO.setTenantDomain(TENANT_DOMAIN);
-                    tokenReqDTO.setPkceCodeVerifier(null);
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Application Details Fetched Successfully \n" +
-                              "Application name:  "+oauthapps[0].getApplicationName() + "\n" +
-                              "Consumer_key: "+oauthapps[0].getOauthConsumerKey() + "\n" +
-                              "Consumer_secret: "+oauthapps[0].getOauthConsumerSecret()
-                    );
-                }
-
-                requestParameters[0] = requestParameter;
-                tokenReqDTO.setRequestParameters(requestParameters);
-                tokenReqDTO.setRequestParameters(requestParameters);
-                OAuth2Service service = (OAuth2Service) PrivilegedCarbonContext.getThreadLocalCarbonContext()
-                        .getOSGiService(OAuth2Service.class);
-                if(log.isDebugEnabled()) {
-                    log.debug("Starting to issue AccessToken for User "+userName);
-                }
-
-                    OAuthClientAuthnContext oAuthClientAuthnContext = new OAuthClientAuthnContext();
-                    oAuthClientAuthnContext.setClientId(oauthapps[0].getOauthConsumerKey());
-                    oAuthClientAuthnContext.setAuthenticated(true);
-                    tokenReqDTO.setoAuthClientAuthnContext(oAuthClientAuthnContext);
-
-                    OAuth2AccessTokenRespDTO oAuth2AccessTokenRespDTO = service.issueAccessToken(tokenReqDTO);
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Generated Access Token :" +oAuth2AccessTokenRespDTO.getAccessToken());
-                  }
+                    issueAccessToken(userName, applicationScope, tokenReqDTO, requestParameters, requestParameter, oauthapps[0]);
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug("No Application Found for User: "+userName);
@@ -140,13 +104,61 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         } catch (IdentityOAuthAdminException e) {
             log.error("Error while Fetching application details ", e);
         } finally {
-            PrivilegedCarbonContext.endTenantFlow();
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(threadLocalUsername);
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(threadTenantDomain);
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+            endTenantFlow(threadLocalUsername, threadTenantDomain, tenantId);
         }
 
         return true;
+    }
+
+    private void issueAccessToken(String userName, String[] applicationScope, OAuth2AccessTokenReqDTO tokenReqDTO, RequestParameter[] requestParameters, RequestParameter requestParameter, OAuthConsumerAppDTO oauthapp) {
+        tokenReqDTO.setClientId(oauthapp.getOauthConsumerKey());
+        tokenReqDTO.setClientSecret(oauthapp.getOauthConsumerSecret());
+        tokenReqDTO.setCallbackURI(oauthapp.getCallbackUrl());
+        tokenReqDTO.setScope(applicationScope);
+        tokenReqDTO.setTenantDomain(TENANT_DOMAIN);
+        tokenReqDTO.setPkceCodeVerifier(null);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Application Details Fetched Successfully \n" +
+                      "Application name:  "+ oauthapp.getApplicationName() + "\n" +
+                      "Consumer_key: "+ oauthapp.getOauthConsumerKey() + "\n" +
+                      "Consumer_secret: "+ oauthapp.getOauthConsumerSecret()
+            );
+        }
+
+        requestParameters[0] = requestParameter;
+        tokenReqDTO.setRequestParameters(requestParameters);
+        tokenReqDTO.setRequestParameters(requestParameters);
+        OAuth2Service service = (OAuth2Service) PrivilegedCarbonContext.getThreadLocalCarbonContext()
+                .getOSGiService(OAuth2Service.class);
+        if(log.isDebugEnabled()) {
+            log.debug("Starting to issue AccessToken for User "+userName);
+        }
+
+        OAuthClientAuthnContext oAuthClientAuthnContext = new OAuthClientAuthnContext();
+        oAuthClientAuthnContext.setClientId(oauthapp.getOauthConsumerKey());
+        oAuthClientAuthnContext.setAuthenticated(true);
+        tokenReqDTO.setoAuthClientAuthnContext(oAuthClientAuthnContext);
+
+        OAuth2AccessTokenRespDTO oAuth2AccessTokenRespDTO = service.issueAccessToken(tokenReqDTO);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Generated Access Token :" +oAuth2AccessTokenRespDTO.getAccessToken());
+          }
+    }
+
+    private void endTenantFlow(String threadLocalUsername, String threadTenantDomain, int tenantId) {
+        PrivilegedCarbonContext.endTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(threadLocalUsername);
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(threadTenantDomain);
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+    }
+
+    private void startTenantFlow(String userName) {
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(userName);
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(TENANT_DOMAIN);
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(-1234);
     }
 
     /**

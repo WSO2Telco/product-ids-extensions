@@ -3,12 +3,7 @@
 Copy the `api-invocation-handler-<version>.jar` file to `<HUB_HOME>/repository/componenet/dropins/`
 ** Build api-invocation-handler-<version>.jar from repository `extended-handlers`
 
-Place the `mig_aouth_token.properties` file in /repository/conf/ location.
-
-Edit the API synapse to add below handler at the top of handlers [on our auth token userinfo apis]
-`<handler class="com.wso2telco.dep.apihandler.ApiInvocationHandler"/>`
-For token, userinfo API synapse add the below snippet additionally before `<send>`tag of `<inSequence>`
-
+Place the `mig_aouth_token.properties` file in `<HUB>/repository/conf/ location`.
 
 ### Using Basic Auth
 
@@ -18,7 +13,7 @@ Copy the api-invocation-handler-1.0.0.jar file to `<HUB_HOME>/repository/compone
 
 i.e : It gets revert once republished.
 
-Edit the API synapse (`/repository/deployment/server/synapse-configs/default/api`) to add below handler at the top of handlers 
+Edit the API synapse (`<HUB_HOME>/repository/deployment/server/synapse-configs/default/api`) to add below handler at the top of handlers 
 
 `<handler class="com.wso2telco.dep.apihandler.ApiInvocationHandler"/>` as follows
 
@@ -51,7 +46,7 @@ Edit the API synapse (`/repository/deployment/server/synapse-configs/default/api
 
 ##### Basic auth in ALL API's,
 
-Edit `repository/resources/api_templates/velocity_template.xml` with following handler.
+Edit `<HUB_HOME>/repository/resources/api_templates/velocity_template.xml` with following handler.
 
 `<handler class="com.wso2telco.dep.apihandler.ApiInvocationHandler"/>`
 
@@ -72,7 +67,7 @@ Copy com.wso2telco.dep.tokenregenerator-1.0.0.jar to `<IS_HOME>/repository/compo
 
 ### Update the _auth_failure_handler_.xml
 
-Add the below lines to `_auth_failure_handler_.xml` in `repository/deployment/server/synapse-configs/default/sequences`
+Add the below lines to `_auth_failure_handler_.xml` in `<HUB>/repository/deployment/server/synapse-configs/default/sequences`
   
 Add these line below the <property name="error_message_type" value="application/xml"/>
 
