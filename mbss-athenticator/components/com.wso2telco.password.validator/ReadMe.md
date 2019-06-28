@@ -1,15 +1,8 @@
 
-Patch Information:
------------ 
-
-Patch ID         : WSO2Telco-MIG-2.2.0-00106
-Applies To       : wso2telcoids-2.2.0
-Associated JIRA  : https://jira.wso2telco.com/jira/browse/MCSDDEV-173
-
 DESCRIPTION
 -----------
 
-This patch includes the fix to avoid entering username as part of the password field during signup process [API STORE]
+This avoid entering username as part of the password field during signup process [API STORE]
 
 
 CONFIGURATIONS & INSTALLATION INSTRUCTIONS

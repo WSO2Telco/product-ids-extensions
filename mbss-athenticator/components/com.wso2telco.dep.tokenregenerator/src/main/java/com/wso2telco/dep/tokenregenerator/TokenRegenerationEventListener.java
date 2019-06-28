@@ -31,10 +31,8 @@ import org.wso2.carbon.user.core.UserStoreManager;
 import org.wso2.carbon.user.core.common.AbstractUserOperationEventListener;
 
 /**
- *
  * Generate a new Access Token on Password Reset
  * **This Event Listener executes before IdentityMgtEventListener **
- *
  */
 public class TokenRegenerationEventListener extends AbstractUserOperationEventListener {
 
@@ -53,8 +51,9 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
 
     /**
      * Refresh token on password reset
-     * @param userName username
-     * @param credential password
+     *
+     * @param userName         username
+     * @param credential       password
      * @param userStoreManager userStoreManager
      * @return true
      * @throws UserStoreException
@@ -64,7 +63,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
 
         if (log.isDebugEnabled()) {
             log.debug("Executing TokenRegenerationEventListener");
-            log.debug("Username : "+ userName);
+            log.debug("Username : " + userName);
         }
 
         String threadLocalUsername = PrivilegedCarbonContext.getThreadLocalCarbonContext().getUsername();
@@ -75,7 +74,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
             startTenantFlow(userName);
 
             if (log.isDebugEnabled()) {
-                log.debug("Fetching application details for "+userName);
+                log.debug("Fetching application details for " + userName);
             }
 
             OAuthConsumerAppDTO[] oauthApps = new OAuthAdminService().getAllOAuthApplicationData();
@@ -84,18 +83,18 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
                 OAuth2AccessTokenReqDTO tokenReqDTO = new OAuth2AccessTokenReqDTO();
                 tokenReqDTO.setGrantType(GRANT_TYPE);
 
-                if(oauthApps.length > 0) {
+                if (oauthApps.length > 0) {
                     issueAccessToken(userName, tokenReqDTO, oauthApps[0]);
                 } else {
                     if (log.isDebugEnabled()) {
-                        log.debug("No Application Found for User: "+userName);
+                        log.debug("No Application Found for User: " + userName);
                     }
                 }
-             }
+            }
         } catch (IdentityOAuthAdminException e) {
             log.error("Error while Fetching application details ", e);
         } finally {
-            endTenantFlow(threadLocalUsername, threadTenantDomain,tenantId);
+            endTenantFlow(threadLocalUsername, threadTenantDomain, tenantId);
         }
 
         return true;
@@ -103,13 +102,13 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
 
     private void issueAccessToken(String userName, OAuth2AccessTokenReqDTO tokenReqDTO, OAuthConsumerAppDTO oauthapp) {
 
-        final String scope =  DataHolder.getInstance().getApiManagerConfigurationService().getAPIManagerConfiguration().getFirstProperty(APIConstants.
+        final String scope = DataHolder.getInstance().getApiManagerConfigurationService().getAPIManagerConfiguration().getFirstProperty(APIConstants.
                 APPLICATION_TOKEN_SCOPE);
 
-        final String[] applicationScope = new String[] {scope};
+        final String[] applicationScope = new String[]{scope};
 
         RequestParameter[] requestParameters = new RequestParameter[1];
-        RequestParameter requestParameter = new RequestParameter(VALIDITY_PERIOD_KEY,VALIDITY_PERIOD_VALUE);
+        RequestParameter requestParameter = new RequestParameter(VALIDITY_PERIOD_KEY, VALIDITY_PERIOD_VALUE);
         tokenReqDTO.setClientId(oauthapp.getOauthConsumerKey());
         tokenReqDTO.setClientSecret(oauthapp.getOauthConsumerSecret());
         tokenReqDTO.setCallbackURI(oauthapp.getCallbackUrl());
@@ -119,9 +118,9 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
 
         if (log.isDebugEnabled()) {
             log.debug("Application Details Fetched Successfully \n" +
-                      "Application name:  "+ oauthapp.getApplicationName() + "\n" +
-                      "Consumer_key: "+ oauthapp.getOauthConsumerKey() + "\n" +
-                      "Consumer_secret: "+ oauthapp.getOauthConsumerSecret()
+                    "Application name:  " + oauthapp.getApplicationName() + "\n" +
+                    "Consumer_key: " + oauthapp.getOauthConsumerKey() + "\n" +
+                    "Consumer_secret: " + oauthapp.getOauthConsumerSecret()
             );
         }
 
@@ -130,8 +129,8 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         tokenReqDTO.setRequestParameters(requestParameters);
         OAuth2Service service = (OAuth2Service) PrivilegedCarbonContext.getThreadLocalCarbonContext()
                 .getOSGiService(OAuth2Service.class);
-        if(log.isDebugEnabled()) {
-            log.debug("Starting to issue AccessToken for User "+userName);
+        if (log.isDebugEnabled()) {
+            log.debug("Starting to issue AccessToken for User " + userName);
         }
 
         tokenReqDTO.setoAuthClientAuthnContext(getOAuthClientAuthnContext(oauthapp));
@@ -139,8 +138,8 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         OAuth2AccessTokenRespDTO oAuth2AccessTokenRespDTO = service.issueAccessToken(tokenReqDTO);
 
         if (log.isDebugEnabled()) {
-            log.debug("Generated Access Token :" +oAuth2AccessTokenRespDTO.getAccessToken());
-          }
+            log.debug("Generated Access Token :" + oAuth2AccessTokenRespDTO.getAccessToken());
+        }
     }
 
     private OAuthClientAuthnContext getOAuthClientAuthnContext(OAuthConsumerAppDTO oauthapp) {
@@ -166,6 +165,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
 
     /**
      * Executing doPostUpdateCredential method for obtaining new access token
+     *
      * @param userName
      * @param credential
      * @param userStoreManager
