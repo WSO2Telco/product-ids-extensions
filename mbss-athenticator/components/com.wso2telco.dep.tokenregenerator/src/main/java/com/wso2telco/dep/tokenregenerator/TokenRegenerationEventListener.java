@@ -67,6 +67,10 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
             log.debug("Username : "+ userName);
         }
 
+        String threadLocalUsername = PrivilegedCarbonContext.getThreadLocalCarbonContext().getUsername();
+        String threadTenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        final int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+
         try {
             startTenantFlow(userName);
 
@@ -91,7 +95,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         } catch (IdentityOAuthAdminException e) {
             log.error("Error while Fetching application details ", e);
         } finally {
-            endTenantFlow();
+            endTenantFlow(threadLocalUsername, threadTenantDomain,tenantId);
         }
 
         return true;
@@ -146,11 +150,7 @@ public class TokenRegenerationEventListener extends AbstractUserOperationEventLi
         return oAuthClientAuthnContext;
     }
 
-    private void endTenantFlow() {
-        String threadLocalUsername = PrivilegedCarbonContext.getThreadLocalCarbonContext().getUsername();
-        String threadTenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        final int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
-
+    private void endTenantFlow(String threadLocalUsername, String threadTenantDomain, int tenantId) {
         PrivilegedCarbonContext.endTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(threadLocalUsername);
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(threadTenantDomain);
