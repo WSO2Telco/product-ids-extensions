@@ -11,16 +11,14 @@ CONFIGURATIONS & INSTALLATION INSTRUCTIONS
 (i) Copy following artifact from resources/ directory into <IS_HOME>/repository/components/dropins (replace existing ones if needed)
     * password-validator-x.x.x.jar
 
-(ii) Open the identity.xml file found in the <IS_HOME>/repository/conf/identity/ directory and set the org.wso2.carbon.identity.mgt.IdentityMgtEventListener
-under the <EventListeners> tag to enable="true".
 
-<EventListener type="org.wso2.carbon.user.core.listener.UserOperationEventListener"
-name="org.wso2.carbon.identity.mgt.IdentityMgtEventListener" orderId="50" enable="true"/>
+(ii) Open the identity-event.properties file found in the <IS_HOME>/repository/conf/identity/ directory and locate the 
+config: passwordPolicy.class.PasswordNamePolicy and replace the value with following.
 
-(iii) Open the identity-mgt.properties file found in the <IS_HOME>/repository/conf/identity/ directory and define the following custom classes.
+     passwordPolicy.class.PasswordNamePolicy=com.wso2telco.password.validator.CustomPasswordPolicy
 
-Password.policy.extensions.1=com.wso2telco.password.validator.CustomPasswordPolicy
-
-(iv) Copy patch_mig00106 to <IS_HOME>/repository/components/patches
+(iv) Set the value of "passwordPolicy.enable" to true
+     
+     passwordPolicy.enable=true
 
 (v) Restart the IS server

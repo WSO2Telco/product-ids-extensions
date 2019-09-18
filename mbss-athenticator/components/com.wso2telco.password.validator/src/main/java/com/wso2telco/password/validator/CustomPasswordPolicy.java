@@ -3,7 +3,7 @@ package com.wso2telco.password.validator;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.identity.mgt.policy.AbstractPasswordPolicyEnforcer;
+import org.wso2.carbon.identity.mgt.policy.password.DefaultPasswordNamePolicy;
 
 /**
  *  Custom validator for password policies
@@ -12,28 +12,30 @@ import org.wso2.carbon.identity.mgt.policy.AbstractPasswordPolicyEnforcer;
  *  Policy : Username cannot be a part of the password.
  *
  */
-public class CustomPasswordPolicy extends AbstractPasswordPolicyEnforcer {
+public class CustomPasswordPolicy extends DefaultPasswordNamePolicy {
+
   private static Log log = LogFactory.getLog(CustomPasswordPolicy.class);
-  
+
   public CustomPasswordPolicy() {}
-  
+
   public boolean enforce(Object... args) {
     if (args != null && args.length > 0)
     {
       String password = args[0].toString();
       String username = args[1].toString();
-      if (password.toLowerCase().contains(username.toLowerCase()))
-      {
+      if (password.toLowerCase().contains(username.toLowerCase())) {
         errorMessage = "Password cannot contain the User Name";
         log.error(errorMessage);
         return false;
+      } else {
+        return true;
       }
-      return true;
+
     }
-    
+
 
     return true;
   }
-  
+
   public void init(Map<String, String> params) {}
 }
