@@ -42,6 +42,12 @@
     Claim Uri              http://wso2.org/claims/identity/accountSuspended
     Mapped Attribute (s)   accountSuspended
     Supported by Default   true
+
+    Display Name           Failed Login Attempts  
+    Description            Failed Login Attempts
+    Claim Uri              http://wso2.org/claims/identity/failedLoginAttempts  
+    Mapped Attribute (s)   failedLoginAttempts  
+    Supported by Default   true
   
     Display Name           UTC Offset  
     Description            UTC Offset
