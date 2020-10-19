@@ -53,7 +53,7 @@ changePasswordAtFirstLogin
 </datasource> 
 ```
 
-5. Execute db_setup.mysql.sql on the database defined in the previous step (WSO2IDENTITY_DB) 
+5. Execute db_setup.sql on the database defined in the previous step (WSO2IDENTITY_DB) 
 
 6. Open identity.xml file located at <IS_HOME>/repository/conf/identity directory and find the <EventListeners> section and insert the following snippet at the end of the section. 
 ```
