@@ -39,9 +39,9 @@
     
     <!--Enabled/Disabled statuses of individual features-->
     <featureConfig>
-        <accountSuspensionFeature>true</accountSuspensionFeature>        
+        <accountSuspensionFeature>false</accountSuspensionFeature>        
         <loginTimeRestrictionFeature>true</loginTimeRestrictionFeature>
-        <periodicPasswordChangeFeature>true</periodicPasswordChangeFeature>
+        <periodicPasswordChangeFeature>false</periodicPasswordChangeFeature>
         <sessionLimitingFeature>true</sessionLimitingFeature>
         <maximumSessionLimit>1</maximumSessionLimit>
         <sessionTimeout>1800</sessionTimeout> <!--In seconds-->
@@ -49,6 +49,6 @@
     
     <periodicPasswordChangeConfig>
         <passwordChangeInterval>60</passwordChangeInterval>   <!--in days-->
-        <changePasswordAtFirstLogin>true</changePasswordAtFirstLogin>
+        <changePasswordAtFirstLogin>false</changePasswordAtFirstLogin>
     </periodicPasswordChangeConfig>
 </mbssAuthenticatorConfig>
