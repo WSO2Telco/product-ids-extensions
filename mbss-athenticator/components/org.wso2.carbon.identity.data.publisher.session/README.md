@@ -1,0 +1,1 @@
+Please refer `com.wso2telco.mbss.authenticator` module README file.

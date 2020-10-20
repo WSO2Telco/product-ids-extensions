@@ -25,11 +25,10 @@
     <packaging>pom</packaging>
 
     <scm>
-        <url>https://github.com/wso2-extensions/identity-data-publisher-authentication.git</url>
-        <developerConnection>scm:git:https://github.com/wso2-extensions/identity-data-publisher-authentication.git
-        </developerConnection>
-        <connection>scm:git:https://github.com/wso2-extensions/identity-data-publisher-authentication.git</connection>
-        <tag>v5.1.2</tag>
+        <url>https://github.com/WSO2Telco/product-ids-extensions.git</url>
+        <developerConnection>scm:git:https://github.com/WSO2Telco/product-ids-extensions.git</developerConnection>
+        <connection>scm:git:https://github.com/WSO2Telco/product-ids-extensions.git</connection>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>
