@@ -1,5 +1,5 @@
 # Identity Server Extensions
-[![Build](https://github.com/WSO2Telco/product-ids-extensions/workflows/build/badge.svg)](https://github.com/chathurabuddi/product-ids-extensions/actions?query=workflow%3Abuild)
+[![Build](https://github.com/WSO2Telco/product-ids-extensions/workflows/build/badge.svg)](https://github.com/WSO2Telco/product-ids-extensions/actions?query=workflow%3Abuild)
 [![Latest Version](https://img.shields.io/github/v/release/WSO2Telco/product-ids-extensions)](https://github.com/WSO2Telco/product-ids-extensions/releases/latest)
 
 Additional features developed for WSO2 Identity Server 5.6.0.
