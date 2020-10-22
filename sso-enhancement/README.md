@@ -1,4 +1,4 @@
-# SSO Login Page Remove Forgot Username,Password and Register Now Links
+# Remove Forgot Username,Password and Register Now Links In SSO Login Page 
 
 ### System Requirements
 
@@ -8,8 +8,8 @@
 
 ### Features
 
-Remove forgot username and password recovery option sso login page.
-Remove register now self signup sso login page. 
+1. Remove forgot username and password recovery option sso login page.
+2. Remove register now self signup sso login page. 
 
 ### Installation
 
