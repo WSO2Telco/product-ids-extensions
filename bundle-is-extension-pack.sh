@@ -45,3 +45,9 @@ rm -rf ${IDN_GOV_DIR}/unzip
 rm -f ${IDN_GOV_DIR}/account-suspension-notification-task-feature-*.zip
 cp identity-governance/components/org.wso2.carbon.identity.account.suspension.notification.task/src/main/resources/accountsuspension.properties ${IDN_GOV_DIR}
 cp identity-governance/README.md ${IDN_GOV_DIR}
+
+
+export SSO_EHN_DIR=${TARGET_DIR}/sso-enhancement
+mkdir -p ${SSO_EHN_DIR}
+cp sso-enhancement/README.md ${SSO_EHN_DIR}
+cp sso-enhancement/basicauth.jsp ${SSO_EHN_DIR}

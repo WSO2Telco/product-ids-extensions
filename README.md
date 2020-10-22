@@ -21,3 +21,7 @@ Please refer [Password Validator README](mbss-athenticator/components/com.wso2te
 ### Identity Governance
 This enables the account suspension & previous login time features.  
 Please refer [Identity Governance README](identity-governance/README.md)
+
+### SSO Enhancement
+Remove SSO login page forgot username,password and register now links.  
+Please refer [SSO Enhancement](sso-enhancement/README.md)
