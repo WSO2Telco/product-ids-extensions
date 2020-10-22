@@ -13,7 +13,7 @@
 
 ### Installation
 
-1. Copy and repalce `basicauth.jsp` to `<IS_HOME>/repository/deployment/server/webapps/authenticationendpoint/basicauth.jsp`
+1. Copy and replace `basicauth.jsp` to `<IS_HOME>/repository/deployment/server/webapps/authenticationendpoint/basicauth.jsp`
 
 2. Check correctly code comments are available 182 to 246 lines in basicauth.jsp file
 
