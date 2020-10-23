@@ -21,6 +21,10 @@ jobs:
         run: |
           cd mbss-athenticator
           mvn clean install
+      - name: Build custom-jwt-generator
+        run: |
+          cd custom-jwt-generator
+          mvn clean install
       - name: Change bundle script permissions
         run: chmod +x ./bundle-is-extension-pack.sh
       - name: Bundle Artifacts
