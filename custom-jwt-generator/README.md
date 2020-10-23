@@ -12,7 +12,7 @@ This enables the custom JWT generator feature originally developed for Amdocs IG
 
 ### Installation
 
-1. Copy the `custom-jwt-generator-1.1.0-SNAPSHOT.jar` into `<IS_HOME>/repository/components/lib`
+1. Copy the `custom-jwt-generator-1.1.1.jar` into `<IS_HOME>/repository/components/lib`
 
 2. The custom JWT needs to be enabled by following at `api-manager.xml`.
 ```
