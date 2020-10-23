@@ -51,3 +51,8 @@ export SSO_EHN_DIR=${TARGET_DIR}/sso-enhancement
 mkdir -p ${SSO_EHN_DIR}
 cp sso-enhancement/README.md ${SSO_EHN_DIR}
 cp sso-enhancement/basicauth.jsp ${SSO_EHN_DIR}
+
+export CUSTOM_JWT_DIR=${TARGET_DIR}/custom-jwt-generator
+mkdir -p ${CUSTOM_JWT_DIR}
+cp custom-jwt-generator/target/custom-jwt-generator-*.jar ${CUSTOM_JWT_DIR}
+cp custom-jwt-generator/README.md ${CUSTOM_JWT_DIR}
