@@ -25,3 +25,7 @@ Please refer [Identity Governance README](identity-governance/README.md)
 ### SSO Enhancement
 Remove SSO login page forgot username,password and register now links.  
 Please refer [SSO Enhancement](sso-enhancement/README.md)
+
+### Custom JWT Generator
+This enables the custom JWT generator feature originally developed for Amdocs IGW release.  
+Please refer [SSO Enhancement](custom-jwt-generator/README.md)
