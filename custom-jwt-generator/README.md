@@ -26,7 +26,7 @@ This enables the custom JWT generator feature originally developed for Amdocs IG
 4. This customization have enabled feature to use ES384 signing algorithms via the configuration at api-manager.xml. By default it will be using SHA256withRSA.But amdocs are using default implementation.
 ```
 <JWTConfiguration>
-<SignatureAlgorithm>ES384</SignatureAlgorithm>
+   <SignatureAlgorithm>ES384</SignatureAlgorithm>
 </JWTConfiguration>
 ```
 
