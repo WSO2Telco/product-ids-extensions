@@ -1,4 +1,4 @@
-package com.wso2telco.dep.custom.amdocs.jwt;
+package com.wso2telco.dep.custom.jwt;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.apache.commons.codec.binary.Base64;
