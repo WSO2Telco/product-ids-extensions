@@ -1,4 +1,4 @@
-package com.wso2telco.dep.custom.amdocs.jwt;
+package com.wso2telco.dep.custom.jwt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
