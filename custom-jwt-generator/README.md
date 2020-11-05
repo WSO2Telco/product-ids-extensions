@@ -12,31 +12,33 @@ This enables the custom JWT generator feature originally developed for Amdocs IG
 
 ### Installation
 
-1. Copy the `custom-jwt-generator-1.1.1.jar` into `<IS_HOME>/repository/components/lib`
+1. Copy the `custom-jwt-generator-1.1.1.jar` into `<IS_HOME>/repository/components/lib` directory.
 
-2. The custom JWT needs to be enabled by following at `api-manager.xml`.
+2. Then enable the custom JWT generation by modifying following properties in `api-manager.xml`. This JWT format is 
+customized based on Amdocs requirements.
 ```
 <JWTConfiguration>
+   <EnableJWTGeneration>true</EnableJWTGeneration>
    <JWTGeneratorImpl>com.wso2telco.dep.custom.jwt.CustomJWTTokenGenerator</JWTGeneratorImpl>
 </JWTConfiguration>
 ```
 
-3. This is jwt format customized based on the amdocs requirements
-
-4. This customization have enabled feature to use ES384 signing algorithms via the configuration at api-manager.xml. By default it will be using SHA256withRSA.But amdocs are using default implementation.
+3. This customization has enabled feature to use ES384 signing algorithms via the configuration at `api-manager.xml`. 
+But Amdocs is using default implementation which is SHA256withRSA, hence the following is **not required**
 ```
 <JWTConfiguration>
    <SignatureAlgorithm>ES384</SignatureAlgorithm>
 </JWTConfiguration>
 ```
 
-5. If custom keystore is required to be used for sigining it need to be added to the registry and registry flag need to be created. In amdocs usecase default is used so following is not required.  
+5. If custom keystore is required to be used for signing, it should be added to the registry and registry flag need 
+to be created. But in Amdocs use-case default is used, hence the following is **not required**.  
 
 Registry flag should be as following path and value  
 path : `/_system/governance/apimgt/ssl.with.custom.keystore`  
 value: `true`  
 
-And the keystore needs to be added, with properties mentioned for the resource.  
+The keystore needs to be added, with properties mentioned for the resource.  
 path: `/_system/governance/repository/security/key-stores/mutualSSL.jks`  
 
 properties   
