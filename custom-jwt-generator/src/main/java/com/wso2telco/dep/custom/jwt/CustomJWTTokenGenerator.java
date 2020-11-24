@@ -67,20 +67,15 @@ public class CustomJWTTokenGenerator extends JWTGenerator {
         String subscriber = apiKeyValidationInfoDTO.getSubscriber();
         String applicationId = apiKeyValidationInfoDTO.getApplicationId();
         int tenantId = APIUtil.getTenantId(endUserName);
-        String accessToken = validationContext.getAccessToken();        
-        String dialect = getClaimDialect(validationContext);        
+        String accessToken = validationContext.getAccessToken();    
 
-        Map<String, String> claims = new LinkedHashMap(9);
+        Map<String, String> claims = new LinkedHashMap(5);
 
         claims.put("sub", "apigw_proxy");
         claims.put("iss", CustomAPIUtil.getIssuerDomainName());
         claims.put("jti", accessToken + String.valueOf(currentTime));
         claims.put("tenid", String.valueOf(tenantId));
         claims.put("salesChannel", getSalesChannel(validationContext, endUserName));
-        claims.put(dialect + "/subscriber", subscriber);
-        claims.put(dialect + "/applicationid", applicationId);
-        claims.put(dialect + "/version", validationContext.getVersion());
-        claims.put(dialect + "/enduser", APIUtil.getUserNameWithTenantSuffix(endUserName));
         return claims;
     }
 
