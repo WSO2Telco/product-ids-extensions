@@ -56,3 +56,8 @@ export CUSTOM_JWT_DIR=${TARGET_DIR}/custom-jwt-generator
 mkdir -p ${CUSTOM_JWT_DIR}
 cp custom-jwt-generator/target/custom-jwt-generator-*.jar ${CUSTOM_JWT_DIR}
 cp custom-jwt-generator/README.md ${CUSTOM_JWT_DIR}
+
+export JWT_WITHOUT_ESCAPED_URL_DIR=${TARGET_DIR}/jwt-generator-without-escaped-url
+mkdir -p ${JWT_WITHOUT_ESCAPED_URL_DIR}
+cp jwt-generator-without-escaped-url/target/jwt-generator-without-escaped-url-*.jar ${JWT_WITHOUT_ESCAPED_URL_DIR}
+cp jwt-generator-without-escaped-url/README.md ${JWT_WITHOUT_ESCAPED_URL_DIR}
