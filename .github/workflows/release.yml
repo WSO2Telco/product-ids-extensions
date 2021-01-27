@@ -25,6 +25,10 @@ jobs:
         run: |
           cd custom-jwt-generator
           mvn clean install
+      - name: Build jwt-generator-without-escaped-url
+        run: |
+          cd jwt-generator-without-escaped-url
+          mvn clean install
       - name: Change bundle script permissions
         run: chmod +x ./bundle-is-extension-pack.sh
       - name: Bundle Artifacts
