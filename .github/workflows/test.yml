@@ -33,3 +33,7 @@ jobs:
         run: |
           cd custom-jwt-generator
           mvn clean test
+      - name: Build jwt-generator-without-escaped-url
+        run: |
+          cd jwt-generator-without-escaped-url
+          mvn clean test
